@@ -1,6 +1,7 @@
 import { getSecureDownloadUrl } from './notifications'
 import { getSupabase, isSupabaseConfigured } from '../supabase'
-import { generateRedemptionCode, mockTrackedRequests } from '../../data/services'
+import { getCustomerName } from '../customer'
+import { generateRedemptionCode } from '../../data/services'
 import type { ServiceCategory, RequestStatus, TrackedRequest } from '../../types'
 import type { ServiceRequestRow, Database } from '../database.types'
 
@@ -30,7 +31,17 @@ export interface AdminStats {
   newspapers: number
   todayCount: number
   revenue: number
+  todayRevenue: number
+  weekRevenue: number
+  avgOrderValue: number
+  affidavitRevenue: number
+  newspaperRevenue: number
+  paidCount: number
+  pendingPaymentCount: number
+  failedPaymentCount: number
 }
+
+export { getCustomerName }
 
 function addYears(date: Date, years: number) {
   const d = new Date(date)
@@ -132,7 +143,7 @@ export async function trackRequestByCode(code: string): Promise<TrackedRequest |
   const normalized = code.toUpperCase().trim()
 
   if (!isSupabaseConfigured) {
-    return mockTrackedRequests[normalized] ?? null
+    return null
   }
 
   const sb = getSupabase()!
@@ -140,7 +151,7 @@ export async function trackRequestByCode(code: string): Promise<TrackedRequest |
 
   if (error) {
     console.error('trackRequestByCode:', error.message)
-    return mockTrackedRequests[normalized] ?? null
+    return null
   }
 
   return rpcToTracked(data as Record<string, unknown>)
@@ -214,53 +225,70 @@ export async function getDocumentDownloadUrl(code: string): Promise<string | nul
 // ─── Admin API ────────────────────────────────────────────────
 
 export async function fetchAdminStats(options?: { fromDate?: string; toDate?: string }): Promise<AdminStats> {
+  const empty: AdminStats = {
+    total: 0, submitted: 0, processing: 0, approved: 0,
+    affidavits: 0, newspapers: 0, todayCount: 0, revenue: 0,
+    todayRevenue: 0, weekRevenue: 0, avgOrderValue: 0,
+    affidavitRevenue: 0, newspaperRevenue: 0,
+    paidCount: 0, pendingPaymentCount: 0, failedPaymentCount: 0,
+  }
+
   if (!isSupabaseConfigured) {
-    const mock = Object.values(mockTrackedRequests)
-    return {
-      total: mock.length,
-      submitted: mock.filter((r) => r.status === 'submitted').length,
-      processing: mock.filter((r) => r.status === 'processing').length,
-      approved: mock.filter((r) => r.downloadAvailable).length,
-      affidavits: mock.filter((r) => r.category === 'affidavit').length,
-      newspapers: mock.filter((r) => r.category === 'newspaper').length,
-      todayCount: mock.length,
-      revenue: 45000,
-    }
+    return empty
   }
 
   const sb = getSupabase()!
   const { data, error } = await sb.from('service_requests').select('*')
 
-  if (error || !data) {
-    return { total: 0, submitted: 0, processing: 0, approved: 0, affidavits: 0, newspapers: 0, todayCount: 0, revenue: 0 }
-  }
+  if (error || !data) return empty
 
   const today = new Date().toDateString()
+  const weekAgo = Date.now() - 7 * 24 * 3_600_000
   let rows = (data ?? []) as ServiceRequestRow[]
 
+  const paidRows = rows.filter((r) => r.payment_status === 'paid')
+
+  let filteredPaid = paidRows
   if (options?.fromDate) {
     const from = new Date(options.fromDate)
-    rows = rows.filter((r) => new Date(r.submitted_at) >= from)
+    filteredPaid = filteredPaid.filter((r) => r.paid_at && new Date(r.paid_at) >= from)
   }
   if (options?.toDate) {
     const to = new Date(options.toDate)
     to.setHours(23, 59, 59, 999)
-    rows = rows.filter((r) => new Date(r.submitted_at) <= to)
+    filteredPaid = filteredPaid.filter((r) => r.paid_at && new Date(r.paid_at) <= to)
   }
 
-  const paidRows = rows.filter((r) => r.payment_status !== 'pending')
+  const revenue = filteredPaid.reduce((sum, r) => sum + (r.amount_paid ?? 0), 0)
+  const activeRows = rows.filter((r) => r.payment_status !== 'pending')
 
   return {
-    total: paidRows.length,
-    submitted: paidRows.filter((r) => r.status === 'submitted').length,
-    processing: paidRows.filter((r) => r.status === 'processing').length,
-    approved: paidRows.filter((r) => r.status === 'approved' || r.download_available).length,
-    affidavits: paidRows.filter((r) => r.category === 'affidavit').length,
-    newspapers: paidRows.filter((r) => r.category === 'newspaper').length,
-    todayCount: paidRows.filter((r) => new Date(r.submitted_at).toDateString() === today).length,
-    revenue: paidRows
-      .filter((r) => r.payment_status === 'paid')
+    total: activeRows.length,
+    submitted: activeRows.filter((r) => r.status === 'submitted').length,
+    processing: activeRows.filter((r) => r.status === 'processing').length,
+    approved: activeRows.filter((r) => r.status === 'approved' || r.download_available).length,
+    affidavits: activeRows.filter((r) => r.category === 'affidavit').length,
+    newspapers: activeRows.filter((r) => r.category === 'newspaper').length,
+    todayCount: activeRows.filter((r) => new Date(r.submitted_at).toDateString() === today).length,
+    revenue,
+    todayRevenue: paidRows
+      .filter((r) => r.paid_at && new Date(r.paid_at).toDateString() === today)
       .reduce((sum, r) => sum + (r.amount_paid ?? 0), 0),
+    weekRevenue: paidRows
+      .filter((r) => r.paid_at && new Date(r.paid_at).getTime() >= weekAgo)
+      .reduce((sum, r) => sum + (r.amount_paid ?? 0), 0),
+    avgOrderValue: paidRows.length > 0
+      ? Math.round(paidRows.reduce((sum, r) => sum + (r.amount_paid ?? 0), 0) / paidRows.length)
+      : 0,
+    affidavitRevenue: paidRows
+      .filter((r) => r.category === 'affidavit')
+      .reduce((sum, r) => sum + (r.amount_paid ?? 0), 0),
+    newspaperRevenue: paidRows
+      .filter((r) => r.category === 'newspaper')
+      .reduce((sum, r) => sum + (r.amount_paid ?? 0), 0),
+    paidCount: paidRows.length,
+    pendingPaymentCount: rows.filter((r) => r.payment_status === 'pending').length,
+    failedPaymentCount: rows.filter((r) => r.payment_status === 'failed').length,
   }
 }
 
@@ -289,31 +317,7 @@ export async function fetchAllRequests(filters?: {
   search?: string
 }): Promise<ServiceRequestRow[]> {
   if (!isSupabaseConfigured) {
-    return Object.values(mockTrackedRequests).map((m) => ({
-      id: m.code,
-      redemption_code: m.code,
-      category: m.category,
-      service_id: '',
-      service_name: m.serviceName,
-      status: m.status as ServiceRequestRow['status'],
-      contact_phone: '',
-      contact_email: null,
-      referral_code: null,
-      form_data: { customerName: m.customerName },
-      payment_method: null,
-      amount_paid: 0,
-      payment_reference: null,
-      payment_status: 'paid' as const,
-      paid_at: m.submittedAt,
-      document_url: null,
-      download_available: m.downloadAvailable,
-      expires_at: m.expiresAt,
-      submitted_at: m.submittedAt,
-      estimated_ready_at: m.estimatedReady,
-      ready_at: null,
-      created_at: m.submittedAt,
-      updated_at: m.submittedAt,
-    }))
+    return []
   }
 
   const sb = getSupabase()!
@@ -336,7 +340,9 @@ export async function fetchAllRequests(filters?: {
       (r) =>
         r.redemption_code.includes(q) ||
         r.service_name.toLowerCase().includes(filters.search!.toLowerCase()) ||
-        r.contact_phone.includes(filters.search!),
+        r.contact_phone?.includes(filters.search!) ||
+        (r.contact_email?.toLowerCase().includes(filters.search!.toLowerCase()) ?? false) ||
+        getCustomerName(r.form_data as Record<string, unknown>).toLowerCase().includes(filters.search!.toLowerCase()),
     )
   }
   return rows

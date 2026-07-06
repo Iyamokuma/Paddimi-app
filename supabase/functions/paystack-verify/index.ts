@@ -1,6 +1,15 @@
 import { corsHeaders, jsonResponse } from '../_shared/cors.ts'
 import { getAdminClient } from '../_shared/supabase-admin.ts'
 
+function getCustomerNameFromForm(formData: Record<string, unknown> | null): string {
+  if (!formData) return 'Customer'
+  if (formData.fullName && String(formData.fullName).trim()) return String(formData.fullName).trim()
+  const parts = [formData.firstName, formData.middleName, formData.lastName]
+    .filter((p) => p && String(p).trim())
+    .map(String)
+  return parts.length > 0 ? parts.join(' ') : 'Customer'
+}
+
 async function verifyWithPaystack(reference: string): Promise<{ ok: boolean; amount?: number }> {
   const secret = Deno.env.get('PAYSTACK_SECRET_KEY')
   if (!secret) {
@@ -17,10 +26,14 @@ async function verifyWithPaystack(reference: string): Promise<{ ok: boolean; amo
 }
 
 async function notifyNewOrder(
-  requestId: string,
-  code: string,
-  serviceName: string,
-  phone: string,
+  request: {
+    id: string
+    redemption_code: string
+    service_name: string
+    contact_phone: string
+    contact_email: string | null
+    form_data: Record<string, unknown> | null
+  },
   supabaseUrl: string,
   serviceKey: string,
 ) {
@@ -32,18 +45,32 @@ async function notifyNewOrder(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        requestId,
+        requestId: request.id,
         channel,
         recipient,
         notificationType,
-        payload: { code, serviceName, phone },
+        payload: {
+          code: request.redemption_code,
+          serviceName: request.service_name,
+          phone: request.contact_phone ?? '',
+          customerName: getCustomerNameFromForm(request.form_data),
+        },
       }),
     })
   }
 
-  // Admin alert (fans out to both admin inboxes) + customer confirmation
+  const formData = request.form_data ?? {}
+  const notifyChannel = formData.notifyChannel === 'email' ? 'email' : 'sms'
+
+  // Admin alert (fans out to both admin inboxes)
   await notify('email', 'paddimi.mc@gmail.com', 'new_order')
-  await notify('sms', phone, 'order_confirmed')
+
+  // Customer confirmation with redemption code via their chosen channel
+  if (notifyChannel === 'email' && request.contact_email) {
+    await notify('email', request.contact_email, 'order_confirmed')
+  } else if (request.contact_phone) {
+    await notify('sms', request.contact_phone, 'order_confirmed')
+  }
 }
 
 Deno.serve(async (req) => {
@@ -92,14 +119,7 @@ Deno.serve(async (req) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    await notifyNewOrder(
-      request.id,
-      request.redemption_code,
-      request.service_name,
-      request.contact_phone,
-      supabaseUrl,
-      serviceKey,
-    )
+    await notifyNewOrder(request, supabaseUrl, serviceKey)
 
     return jsonResponse({
       code: request.redemption_code,

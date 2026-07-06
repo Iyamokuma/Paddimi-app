@@ -26,8 +26,11 @@ Deno.serve(async (req) => {
 
     const price = getServicePrice(serviceId)
     if (!price) return jsonResponse({ error: 'Invalid service' }, 400)
-    if (!contactPhone || !category || !serviceId || !serviceName) {
+    if (!category || !serviceId || !serviceName) {
       return jsonResponse({ error: 'Missing required fields' }, 400)
+    }
+    if (!contactPhone && !contactEmail) {
+      return jsonResponse({ error: 'Phone or email is required' }, 400)
     }
 
     const sb = getAdminClient()
@@ -48,7 +51,7 @@ Deno.serve(async (req) => {
         status: 'pending_payment',
         payment_status: 'pending',
         payment_reference: reference,
-        contact_phone: contactPhone,
+        contact_phone: contactPhone || null,
         contact_email: contactEmail || null,
         referral_code: referralCode || null,
         form_data: formData ?? {},

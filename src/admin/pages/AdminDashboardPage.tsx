@@ -2,10 +2,11 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   FileText, Newspaper, Clock, CheckCircle2, TrendingUp, ArrowRight, Loader2,
-  RefreshCw, AlertTriangle, Inbox,
+  RefreshCw, AlertTriangle, Inbox, Wallet, BarChart3, CircleDollarSign,
 } from 'lucide-react'
 import {
   fetchAdminStats, fetchAllRequests, filterAwaitingProcessing, filterOverdueRequests,
+  getCustomerName,
 } from '../../lib/api/requests'
 import type { AdminStats } from '../../lib/api/requests'
 import type { ServiceRequestRow } from '../../lib/database.types'
@@ -132,12 +133,31 @@ export function AdminDashboardPage() {
         <StatCard label="New / Submitted" value={stats?.submitted ?? 0} icon={Inbox} accent="brand" />
         <StatCard label="Processing" value={stats?.processing ?? 0} icon={Clock} accent="gold" />
         <StatCard label="Approved" value={stats?.approved ?? 0} icon={CheckCircle2} accent="green" />
-        <StatCard label="Revenue" value={formatNaira(stats?.revenue ?? 0)} icon={TrendingUp} accent="gold" />
+        <StatCard label="Total Revenue" value={formatNaira(stats?.revenue ?? 0)} icon={TrendingUp} accent="gold" />
+      </div>
+
+      <div className="rounded-2xl border border-border bg-white p-6 shadow-sm">
+        <div className="mb-5 flex items-center gap-2">
+          <BarChart3 className="h-5 w-5 text-brand-600" />
+          <h3 className="font-semibold">Financial Overview</h3>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard label="Today's Revenue" value={formatNaira(stats?.todayRevenue ?? 0)} icon={Wallet} accent="green" />
+          <StatCard label="This Week" value={formatNaira(stats?.weekRevenue ?? 0)} icon={TrendingUp} accent="brand" />
+          <StatCard label="Avg. Order Value" value={formatNaira(stats?.avgOrderValue ?? 0)} icon={CircleDollarSign} accent="gold" />
+          <StatCard label="Paid Orders" value={stats?.paidCount ?? 0} icon={CheckCircle2} accent="green" />
+        </div>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard label="Affidavit Revenue" value={formatNaira(stats?.affidavitRevenue ?? 0)} icon={FileText} />
+          <StatCard label="Publication Revenue" value={formatNaira(stats?.newspaperRevenue ?? 0)} icon={Newspaper} />
+          <StatCard label="Awaiting Payment" value={stats?.pendingPaymentCount ?? 0} icon={Clock} accent="gold" />
+          <StatCard label="Failed Payments" value={stats?.failedPaymentCount ?? 0} icon={AlertTriangle} accent="red" />
+        </div>
       </div>
 
       <div className="flex flex-wrap items-end gap-3 rounded-2xl border border-border bg-white p-4 shadow-sm">
         <div>
-          <label className="text-xs font-medium text-muted">Revenue from</label>
+          <label className="text-xs font-medium text-muted">Revenue from (paid date)</label>
           <input
             type="date"
             value={revenueFrom}
@@ -176,6 +196,16 @@ export function AdminDashboardPage() {
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-brand-100 text-left text-xs uppercase tracking-wider text-muted">
+                  <th className="px-6 py-2 font-medium">Code</th>
+                  <th className="px-6 py-2 font-medium">Customer</th>
+                  <th className="px-6 py-2 font-medium">Service</th>
+                  <th className="px-6 py-2 font-medium">Contact</th>
+                  <th className="px-6 py-2 font-medium">Amount</th>
+                  <th className="px-6 py-2 font-medium">Submitted</th>
+                </tr>
+              </thead>
               <tbody className="divide-y divide-brand-100">
                 {awaiting.map((row) => (
                   <tr key={row.id} className="hover:bg-white/60">
@@ -184,8 +214,13 @@ export function AdminDashboardPage() {
                         {row.redemption_code}
                       </Link>
                     </td>
-                    <td className="px-6 py-3 font-medium">{row.service_name}</td>
-                    <td className="px-6 py-3 text-muted">{row.contact_phone}</td>
+                    <td className="px-6 py-3 font-medium">
+                      {getCustomerName(row.form_data as Record<string, unknown>)}
+                    </td>
+                    <td className="px-6 py-3">{row.service_name}</td>
+                    <td className="px-6 py-3 text-muted">
+                      {row.contact_phone || row.contact_email || '—'}
+                    </td>
                     <td className="px-6 py-3 font-medium">{formatNaira(row.amount_paid)}</td>
                     <td className="px-6 py-3 text-muted">
                       {new Date(row.submitted_at).toLocaleString('en-NG', {
@@ -248,7 +283,9 @@ export function AdminDashboardPage() {
             <thead>
               <tr className="border-b border-border bg-brand-50/50 text-left text-xs uppercase tracking-wider text-muted">
                 <th className="px-6 py-3 font-medium">Code</th>
+                <th className="px-6 py-3 font-medium">Customer</th>
                 <th className="px-6 py-3 font-medium">Service</th>
+                <th className="px-6 py-3 font-medium">Amount</th>
                 <th className="px-6 py-3 font-medium">Category</th>
                 <th className="px-6 py-3 font-medium">Status</th>
                 <th className="px-6 py-3 font-medium">Submitted</th>
@@ -257,7 +294,7 @@ export function AdminDashboardPage() {
             <tbody className="divide-y divide-border">
               {filteredRecent.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-10 text-center text-muted">
+                  <td colSpan={7} className="px-6 py-10 text-center text-muted">
                     No requests yet. They will appear here when customers submit orders.
                   </td>
                 </tr>
@@ -269,7 +306,11 @@ export function AdminDashboardPage() {
                         {row.redemption_code}
                       </Link>
                     </td>
+                    <td className="px-6 py-3 font-medium">
+                      {getCustomerName(row.form_data as Record<string, unknown>)}
+                    </td>
                     <td className="px-6 py-3 font-medium">{row.service_name}</td>
+                    <td className="px-6 py-3 font-medium">{formatNaira(row.amount_paid)}</td>
                     <td className="px-6 py-3 capitalize text-muted">{row.category}</td>
                     <td className="px-6 py-3"><AdminStatusBadge status={row.status} /></td>
                     <td className="px-6 py-3 text-muted">

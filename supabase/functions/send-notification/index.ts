@@ -78,8 +78,8 @@ function buildMessage(type: string, payload: Record<string, string>): { subject:
     case 'new_order':
       return {
         subject: `New order: ${service} (${code})`,
-        html: `<p>New request received.</p><p><strong>Service:</strong> ${service}</p><p><strong>Code:</strong> ${code}</p><p><strong>Phone:</strong> ${payload.phone ?? ''}</p>`,
-        sms: `New Paddimi order: ${service}. Code ${code}. Phone ${payload.phone ?? ''}`,
+        html: `<p>New request received.</p><p><strong>Customer:</strong> ${payload.customerName ?? 'Customer'}</p><p><strong>Service:</strong> ${service}</p><p><strong>Code:</strong> ${code}</p><p><strong>Phone:</strong> ${payload.phone ?? '—'}</p>`,
+        sms: `New Paddimi order: ${service}. Code ${code}. Customer ${payload.customerName ?? ''}`,
       }
     case 'order_confirmed':
       return {

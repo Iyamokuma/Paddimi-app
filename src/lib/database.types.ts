@@ -34,7 +34,7 @@ export interface Database {
           service_id: string
           service_name: string
           status: 'pending_payment' | 'submitted' | 'processing' | 'approved' | 'published' | 'cancelled'
-          contact_phone: string
+          contact_phone: string | null
           contact_email: string | null
           referral_code: string | null
           form_data: Json
@@ -59,7 +59,7 @@ export interface Database {
           service_id: string
           service_name: string
           status?: 'pending_payment' | 'submitted' | 'processing' | 'approved' | 'published' | 'cancelled'
-          contact_phone: string
+          contact_phone: string | null
           contact_email?: string | null
           referral_code?: string | null
           form_data?: Json

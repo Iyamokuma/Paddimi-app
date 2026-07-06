@@ -9,6 +9,7 @@ import {
   markRequestProcessing, approveRequest,
 } from '../../lib/api/requests'
 import { sendNotification, getAdminFileUrl } from '../../lib/api/notifications'
+import { getCustomerName, getNotifyChannel } from '../../lib/customer'
 import type { ServiceRequestRow } from '../../lib/database.types'
 import { formatNaira, NOTIFICATION_EMAILS } from '../../data/services'
 import { AdminStatusBadge } from '../components/AdminStatusBadge'
@@ -59,13 +60,13 @@ export function AdminRequestDetailPage() {
     const payload = {
       code: req.redemption_code,
       serviceName: req.service_name,
-      phone: req.contact_phone,
+      phone: req.contact_phone ?? '',
     }
-    if (req.contact_phone) {
-      await sendNotification(req.id, 'sms', req.contact_phone, 'document_approved', payload)
-    }
-    if (req.contact_email) {
+    const channel = getNotifyChannel(req.form_data as Record<string, unknown>)
+    if (channel === 'email' && req.contact_email) {
       await sendNotification(req.id, 'email', req.contact_email, 'document_approved', payload)
+    } else if (req.contact_phone) {
+      await sendNotification(req.id, 'sms', req.contact_phone, 'document_approved', payload)
     }
   }
 
@@ -168,6 +169,8 @@ export function AdminRequestDetailPage() {
   }
 
   const formData = (request.form_data ?? {}) as Record<string, string>
+  const customerName = getCustomerName(formData)
+  const notifyChannel = getNotifyChannel(formData)
   const isApproved = request.status === 'approved' || request.status === 'published'
   const hasDocument = Boolean(request.document_url)
 
@@ -186,6 +189,7 @@ export function AdminRequestDetailPage() {
             <AdminStatusBadge status={request.status} />
           </div>
           <h2 className="mt-2 text-xl font-semibold">{request.service_name}</h2>
+          <p className="text-sm text-muted">{customerName}</p>
           <p className="text-sm capitalize text-muted">{request.category} · {formatNaira(request.amount_paid)}</p>
         </div>
         <div className="text-right text-sm text-muted">
@@ -209,7 +213,9 @@ export function AdminRequestDetailPage() {
           <Card className="!p-5">
             <h3 className="font-semibold">Form Data</h3>
             <dl className="mt-4 grid gap-3 sm:grid-cols-2">
-              {Object.entries(formData).map(([key, value]) => (
+              {Object.entries(formData)
+                .filter(([key]) => key !== 'notifyChannel')
+                .map(([key, value]) => (
                 value ? (
                   <div key={key}>
                     <dt className="text-xs capitalize text-muted">{key.replace(/([A-Z])/g, ' $1')}</dt>
@@ -270,18 +276,49 @@ export function AdminRequestDetailPage() {
           <Card className="!p-5">
             <h3 className="font-semibold">Contact</h3>
             <div className="mt-3 space-y-2 text-sm">
-              <p className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-brand-500" />
-                {request.contact_phone}
-              </p>
+              {request.contact_phone && (
+                <p className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-brand-500" />
+                  {request.contact_phone}
+                </p>
+              )}
               {request.contact_email && (
                 <p className="flex items-center gap-2">
                   <Mail className="h-4 w-4 text-brand-500" />
                   {request.contact_email}
                 </p>
               )}
+              <p className="text-muted">
+                Code delivery: {notifyChannel === 'email' ? 'Email' : 'SMS'}
+              </p>
               {request.referral_code && (
                 <p className="text-muted">Referral: {request.referral_code}</p>
+              )}
+            </div>
+          </Card>
+
+          <Card className="!p-5">
+            <h3 className="font-semibold">Payment</h3>
+            <div className="mt-3 space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-muted">Status</span>
+                <span className="font-medium capitalize">{request.payment_status}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted">Amount</span>
+                <span className="font-medium">{formatNaira(request.amount_paid)}</span>
+              </div>
+              {request.payment_reference && (
+                <div className="flex justify-between gap-2">
+                  <span className="text-muted shrink-0">Reference</span>
+                  <span className="font-mono text-xs">{request.payment_reference}</span>
+                </div>
+              )}
+              {request.paid_at && (
+                <div className="flex justify-between">
+                  <span className="text-muted">Paid at</span>
+                  <span>{new Date(request.paid_at).toLocaleString('en-NG')}</span>
+                </div>
               )}
             </div>
           </Card>
