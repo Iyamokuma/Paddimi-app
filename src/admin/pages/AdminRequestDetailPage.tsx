@@ -11,7 +11,7 @@ import {
 import { sendNotification, getAdminFileUrl } from '../../lib/api/notifications'
 import { getCustomerName, getNotifyChannel } from '../../lib/customer'
 import type { ServiceRequestRow } from '../../lib/database.types'
-import { formatNaira, NOTIFICATION_EMAILS } from '../../data/services'
+import { formatNaira } from '../../data/services'
 import { AdminStatusBadge } from '../components/AdminStatusBadge'
 import { Button } from '../../components/ui/Button'
 import { Select } from '../../components/ui/Select'
@@ -462,22 +462,6 @@ export function AdminRequestDetailPage() {
                 {updating ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Update Status'}
               </Button>
             </div>
-          </Card>
-
-          <Card className="!p-5">
-            <h3 className="font-semibold">Notifications</h3>
-            <p className="mt-1 text-xs text-muted">System emails for job alerts:</p>
-            <ul className="mt-2 space-y-1 text-xs text-muted">
-              {NOTIFICATION_EMAILS.map((e) => (
-                <li key={e} className="flex items-center gap-1">
-                  <Mail className="h-3 w-3" /> {e}
-                </li>
-              ))}
-            </ul>
-            <p className="mt-3 flex items-center gap-1 text-xs text-muted">
-              <Clock className="h-3 w-3" />
-              SMS sent to customer when request is approved
-            </p>
           </Card>
         </div>
       </div>

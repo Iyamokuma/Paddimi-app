@@ -34,7 +34,7 @@ export interface ServiceItem {
   name: string
   description: string
   price: number
-  turnaround: string
+  turnaround?: string
   icon: string
   requiredDocuments?: string[]
 }

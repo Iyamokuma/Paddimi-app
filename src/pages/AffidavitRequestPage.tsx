@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import {
   UserPen, PenLine, Calendar, Heart, Flower2, Smartphone, Car, Cog,
-  ArrowLeftRight, BadgeCheck, CalendarDays, Clock, Check, ArrowLeft, ArrowRight,
+  ArrowLeftRight, BadgeCheck, CalendarDays, Check, ArrowLeft, ArrowRight,
   FileText, ShieldCheck,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
@@ -121,7 +121,6 @@ export function AffidavitRequestPage() {
         notifyChannel={notifyChannel}
         total={total}
         category="affidavit"
-        turnaround={service.turnaround}
       />
     )
   }
@@ -130,7 +129,7 @@ export function AffidavitRequestPage() {
     <>
       <PageHeader
         title="Request an Affidavit"
-        description="Select your affidavit type, complete the required fields, and pay — ready in 15 minutes."
+        description="Select your affidavit type, complete the required fields, and pay securely online."
         icon={<FileText className="h-7 w-7" />}
       />
       <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
@@ -172,12 +171,8 @@ export function AffidavitRequestPage() {
                           )}
                         </div>
                         <p className="mt-1 text-xs leading-relaxed text-muted line-clamp-2">{svc.description}</p>
-                        <div className="mt-2 flex items-center gap-3 text-xs">
-                          <span className="font-semibold text-brand-600">{formatNaira(svc.price)}</span>
-                          <span className="text-muted">
-                            <Clock className="mr-0.5 inline h-3 w-3" />
-                            {svc.turnaround}
-                          </span>
+                        <div className="mt-2 text-xs font-semibold text-brand-600">
+                          {formatNaira(svc.price)}
                         </div>
                       </div>
                     </div>
@@ -262,10 +257,6 @@ export function AffidavitRequestPage() {
                       <span className="font-medium text-right">{deponentName}</span>
                     </div>
                   )}
-                  <div className="flex justify-between">
-                    <span className="text-muted">Turnaround</span>
-                    <span className="font-medium text-green-600">{service.turnaround}</span>
-                  </div>
                   <div className="flex justify-between">
                     <span className="text-muted">Delivery</span>
                     <span className="font-medium">Electronic download</span>

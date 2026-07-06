@@ -15,7 +15,7 @@ interface PaymentSuccessProps {
   notifyChannel: NotifyChannel
   total: number
   category: ServiceCategory
-  turnaround: string
+  turnaround?: string
 }
 
 export function PaymentSuccess({
@@ -65,10 +65,12 @@ export function PaymentSuccess({
               <span className="text-muted">Service</span>
               <span className="font-medium">{serviceName}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted">Expected turnaround</span>
-              <span className="font-medium text-green-600">{turnaround}</span>
-            </div>
+            {turnaround && (
+              <div className="flex justify-between">
+                <span className="text-muted">Expected turnaround</span>
+                <span className="font-medium text-green-600">{turnaround}</span>
+              </div>
+            )}
             <div className="flex justify-between">
               <span className="text-muted">Amount Paid</span>
               <span className="font-bold text-brand-600">{formatNaira(total)}</span>
@@ -99,7 +101,7 @@ export function PaymentSuccess({
         <div className="mt-8 rounded-xl bg-brand-50/50 p-5 text-sm text-muted ring-1 ring-brand-100">
           <p className="font-medium text-foreground">What happens next?</p>
           <ol className="mt-3 list-inside list-decimal space-y-2">
-            <li>Your request is processed — expected within {turnaround}</li>
+            <li>Your request is processed{turnaround ? ` — expected within ${turnaround}` : ''}</li>
             <li>You&apos;ll receive a {notifyChannel === 'sms' ? 'text message' : 'email'} when your document is ready</li>
             <li>Enter your code on the homepage download section to get your document</li>
             <li>Documents are shared electronically only — no physical collection</li>
