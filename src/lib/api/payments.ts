@@ -46,7 +46,9 @@ export async function checkoutService(
 
   if (shouldUsePaystack) {
     const email = input.contactEmail?.trim()
-      || `${input.contactPhone.replace(/\D/g, '')}@customer.paddimi.com`
+      || (input.contactPhone
+        ? `${input.contactPhone.replace(/\D/g, '')}@customer.paddimi.com`
+        : 'customer@paddimi.com')
 
     await openPaystackPopup({
       email,

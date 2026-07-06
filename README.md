@@ -28,11 +28,6 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 | `/newspaper` | 4-step newspaper publication wizard |
 | `/track` | Track request status by redemption code |
 
-## Demo Tracking Codes
-
-- `PG7K2M9X4N` — Affidavit of Name Change (processing)
-- `NH3R8W1Q5T` — Loss of Document Publication (ready)
-
 ## Build
 
 ```bash

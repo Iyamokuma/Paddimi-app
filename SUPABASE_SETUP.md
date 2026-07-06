@@ -18,9 +18,46 @@ VITE_PAYSTACK_PUBLIC_KEY=pk_test_xxxxxxxx
 
 ---
 
+## Paystack — keys only
+
+Once Supabase is connected, payments work by adding keys in two places:
+
+**Frontend (`.env` or Vercel env vars):**
+```env
+VITE_PAYSTACK_PUBLIC_KEY=pk_test_xxxxxxxx
+```
+
+**Supabase Edge Function secrets** (Dashboard → Edge Functions → Secrets):
+```env
+PAYSTACK_SECRET_KEY=sk_test_xxxxxxxx
+PAYSTACK_PUBLIC_KEY=pk_test_xxxxxxxx
+```
+
+Deploy `paystack-initialize` and `paystack-verify`. No other payment code changes needed — Paystack handles card, bank transfer, and USSD in one popup.
+
+For local testing without Paystack, set `PAYMENT_DEV_MODE=true` in edge secrets (never in production).
+
+---
+
+## Notification keys (SMS & email)
+
+After payment is confirmed, the customer's redemption code is sent via **SMS or email** based on their selection at checkout.
+
+**Supabase Edge Function secrets:**
+```env
+RESEND_API_KEY=re_xxxxxxxx
+RESEND_FROM_EMAIL=Paddimi <notifications@yourdomain.com>
+TERMII_API_KEY=xxxxxxxx
+TERMII_SENDER_ID=Paddimi
+```
+
+Without these keys, notifications are logged as `pending` in the admin panel but not delivered.
+
+---
+
 ## Step 1 — Run database migrations
 
-Run all files in `supabase/migrations/` in order (001 → 006), or:
+Run all files in `supabase/migrations/` in order (001 → 007), or:
 
 ```bash
 npx supabase db push
@@ -32,6 +69,7 @@ Key migrations:
 - **003–004** — RLS fixes for admin login
 - **005** — `approved` status
 - **006** — Payment fields, realtime, secure download RPC
+- **007** — Optional phone for email-only customers
 
 ---
 
@@ -69,7 +107,7 @@ Set secrets in **Dashboard → Edge Functions → Secrets**:
 | `TERMII_API_KEY` | SMS via Termii |
 | `TERMII_SENDER_ID` | SMS sender name |
 
-Without Paystack secrets, orders auto-verify in dev mode (no popup).
+Without Paystack secrets, payments fail unless `PAYMENT_DEV_MODE=true` is set (dev only).
 Without Resend/Termii, notifications are logged as `pending`.
 
 ---
@@ -118,9 +156,3 @@ Customer: Enter code on homepage → secure download URL
 ```
 
 Admin alert emails: `paddimi.mc@gmail.com`, `paddimi.mc@yahoo.com`
-
----
-
-## Fallback mode (no Supabase)
-
-Demo codes: **S4B1** (submitted), **K7M2** (processing), **R3W8** (approved/downloadable).

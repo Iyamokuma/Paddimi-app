@@ -4,6 +4,7 @@ import { CheckCircle2, Copy, Check, Mail, MessageSquare, ArrowRight, Download } 
 import { Button } from './ui/Button'
 import { PageHeader } from './layout/PageHeader'
 import { formatNaira, CODE_VALIDITY } from '../data/services'
+import type { NotifyChannel } from '../lib/customer'
 import type { ServiceCategory } from '../types'
 
 interface PaymentSuccessProps {
@@ -11,13 +12,14 @@ interface PaymentSuccessProps {
   serviceName: string
   contactPhone: string
   contactEmail: string
+  notifyChannel: NotifyChannel
   total: number
   category: ServiceCategory
   turnaround: string
 }
 
 export function PaymentSuccess({
-  code, serviceName, contactPhone, contactEmail, total, category, turnaround,
+  code, serviceName, contactPhone, contactEmail, notifyChannel, total, category, turnaround,
 }: PaymentSuccessProps) {
   const [copied, setCopied] = useState(false)
 
@@ -75,18 +77,22 @@ export function PaymentSuccess({
         </div>
 
         <div className="mt-6 rounded-2xl border border-border bg-white p-6 shadow-sm">
-          <h3 className="font-semibold">Notifications sent to</h3>
+          <h3 className="font-semibold">Code sent via {notifyChannel === 'sms' ? 'SMS' : 'email'}</h3>
           <div className="mt-4 space-y-3">
-            <div className="flex items-center gap-3 text-sm">
-              <MessageSquare className="h-5 w-5 text-brand-500" />
-              <span>SMS to <strong>{contactPhone}</strong> when document is ready</span>
-            </div>
-            {contactEmail && (
+            {notifyChannel === 'sms' ? (
+              <div className="flex items-center gap-3 text-sm">
+                <MessageSquare className="h-5 w-5 text-brand-500" />
+                <span>Your code was sent by SMS to <strong>{contactPhone}</strong></span>
+              </div>
+            ) : (
               <div className="flex items-center gap-3 text-sm">
                 <Mail className="h-5 w-5 text-brand-500" />
-                <span>Email to <strong>{contactEmail}</strong> when document is ready</span>
+                <span>Your code was sent by email to <strong>{contactEmail}</strong></span>
               </div>
             )}
+            <p className="text-xs text-muted">
+              You will also be notified via the same channel when your document is ready for download.
+            </p>
           </div>
         </div>
 
@@ -94,7 +100,7 @@ export function PaymentSuccess({
           <p className="font-medium text-foreground">What happens next?</p>
           <ol className="mt-3 list-inside list-decimal space-y-2">
             <li>Your request is processed — expected within {turnaround}</li>
-            <li>You&apos;ll receive SMS{contactEmail ? ' and email' : ''} when your document is ready</li>
+            <li>You&apos;ll receive a {notifyChannel === 'sms' ? 'text message' : 'email'} when your document is ready</li>
             <li>Enter your code on the homepage download section to get your document</li>
             <li>Documents are shared electronically only — no physical collection</li>
           </ol>

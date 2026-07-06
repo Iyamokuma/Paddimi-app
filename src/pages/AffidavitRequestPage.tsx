@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import {
   UserPen, PenLine, Calendar, Heart, Flower2, Smartphone, Car, Cog,
   ArrowLeftRight, BadgeCheck, CalendarDays, Clock, Check, ArrowLeft, ArrowRight,
-  CreditCard, Building, FileText,
+  FileText, ShieldCheck,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Button } from '../components/ui/Button'
@@ -17,8 +17,10 @@ import {
   getAffidavitFields, getTextFields, getFileFields, validateFields, CONTACT_FIELDS,
 } from '../data/affidavitFields'
 import { PaymentSuccess } from '../components/PaymentSuccess'
+import { NotifyChannelPicker } from '../components/NotifyChannelPicker'
 import { PageHeader } from '../components/layout/PageHeader'
 import { checkoutService } from '../lib/api/payments'
+import { contactChannelValid, type NotifyChannel } from '../lib/customer'
 
 const iconMap: Record<string, LucideIcon> = {
   UserPen, PenLine, Calendar, Heart, Flower2, Smartphone, Car, Cog,
@@ -37,7 +39,7 @@ export function AffidavitRequestPage() {
   const [selectedService, setSelectedService] = useState('')
   const [values, setValues] = useState<Record<string, string>>({})
   const [files, setFiles] = useState<Record<string, File[]>>({})
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'transfer' | 'ussd'>('card')
+  const [notifyChannel, setNotifyChannel] = useState<NotifyChannel>('sms')
   const [completed, setCompleted] = useState(false)
   const [redemptionCode, setRedemptionCode] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -63,9 +65,10 @@ export function AffidavitRequestPage() {
   const canProceed = () => {
     switch (step) {
       case 1: return !!selectedService
-      case 2: return validateFields(textFields, values, files) && !!values.phone?.trim()
+      case 2: return validateFields(textFields, values, files)
+        && contactChannelValid(notifyChannel, values.phone, values.email)
       case 3: return fileFields.length === 0 || validateFields(fileFields, values, files)
-      case 4: return !!values.phone?.trim()
+      case 4: return contactChannelValid(notifyChannel, values.phone, values.email)
       default: return false
     }
   }
@@ -80,11 +83,11 @@ export function AffidavitRequestPage() {
         category: 'affidavit',
         serviceId: selectedService,
         serviceName: service.name,
-        contactPhone: values.phone,
+        contactPhone: values.phone ?? '',
         contactEmail: values.email,
         referralCode: values.referralCode,
-        formData: values,
-        paymentMethod,
+        formData: { ...values, notifyChannel },
+        paymentMethod: 'paystack',
         amountPaid: total,
         turnaroundMinutes: 15,
         files,
@@ -113,8 +116,9 @@ export function AffidavitRequestPage() {
       <PaymentSuccess
         code={redemptionCode}
         serviceName={service.name}
-        contactPhone={values.phone}
+        contactPhone={values.phone ?? ''}
         contactEmail={values.email ?? ''}
+        notifyChannel={notifyChannel}
         total={total}
         category="affidavit"
         turnaround={service.turnaround}
@@ -201,8 +205,9 @@ export function AffidavitRequestPage() {
             </div>
             <div>
               <h2 className="text-lg font-semibold">Contact information</h2>
-              <p className="mt-1 text-sm text-muted">Phone is required. Email and referral code are optional.</p>
-              <div className="mt-6">
+              <p className="mt-1 text-sm text-muted">Choose how to receive your code, then provide the matching contact details.</p>
+              <div className="mt-6 space-y-6">
+                <NotifyChannelPicker value={notifyChannel} onChange={setNotifyChannel} />
                 <DynamicFormFields
                   fields={CONTACT_FIELDS}
                   values={values}
@@ -273,32 +278,20 @@ export function AffidavitRequestPage() {
               </Card>
             </div>
 
-            <div>
-              <h3 className="text-sm font-semibold">Payment method</h3>
-              <div className="mt-3 grid gap-3 sm:grid-cols-3">
-                {([
-                  { value: 'card' as const, label: 'Debit/Credit Card', icon: CreditCard },
-                  { value: 'transfer' as const, label: 'Bank Transfer', icon: Building },
-                  { value: 'ussd' as const, label: 'USSD', icon: Smartphone },
-                ]).map((opt) => (
-                  <Card
-                    key={opt.value}
-                    hover
-                    selected={paymentMethod === opt.value}
-                    onClick={() => setPaymentMethod(opt.value)}
-                    className="!p-4"
-                  >
-                    <opt.icon className="h-5 w-5 text-brand-500" />
-                    <p className="mt-2 text-sm font-medium">{opt.label}</p>
-                  </Card>
-                ))}
-              </div>
-            </div>
+            <NotifyChannelPicker value={notifyChannel} onChange={setNotifyChannel} />
 
-            <div className="rounded-xl bg-brand-50 p-4 text-sm text-brand-700">
-              A 4-character redemption code will be sent via SMS to <strong>{values.phone}</strong>
-              {values.email && <> and email to <strong>{values.email}</strong></>}.
-              Use it on the homepage to download your document when ready. Valid for 1 year.
+            <div className="rounded-xl border border-brand-100 bg-brand-50 p-4 text-sm text-brand-700">
+              <div className="flex items-start gap-2">
+                <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
+                <div>
+                  <p className="font-medium">Secure payment via Paystack</p>
+                  <p className="mt-1 text-brand-600">
+                    Pay with debit/credit card, bank transfer, or USSD. After payment is confirmed,
+                    your code will be sent via {notifyChannel === 'sms' ? 'SMS' : 'email'} to{' '}
+                    <strong>{notifyChannel === 'sms' ? values.phone : values.email}</strong>.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         )}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Search, Loader2, Filter } from 'lucide-react'
-import { fetchAllRequests } from '../../lib/api/requests'
+import { fetchAllRequests, getCustomerName } from '../../lib/api/requests'
 import type { ServiceRequestRow } from '../../lib/database.types'
 import { formatNaira } from '../../data/services'
 import { AdminStatusBadge } from '../components/AdminStatusBadge'
@@ -36,7 +36,7 @@ export function AdminRequestsPage() {
             label="Search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Code, service, phone…"
+            placeholder="Code, name, service, phone, email…"
           />
         </div>
         <div className="w-40">
@@ -84,18 +84,19 @@ export function AdminRequestsPage() {
               <thead>
                 <tr className="border-b border-border bg-brand-50/50 text-left text-xs uppercase tracking-wider text-muted">
                   <th className="px-5 py-3 font-medium">Code</th>
+                  <th className="px-5 py-3 font-medium">Customer</th>
                   <th className="px-5 py-3 font-medium">Service</th>
-                  <th className="px-5 py-3 font-medium">Phone</th>
+                  <th className="px-5 py-3 font-medium">Contact</th>
                   <th className="px-5 py-3 font-medium">Amount</th>
+                  <th className="px-5 py-3 font-medium">Payment</th>
                   <th className="px-5 py-3 font-medium">Status</th>
-                  <th className="px-5 py-3 font-medium">Download</th>
                   <th className="px-5 py-3 font-medium">Submitted</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {rows.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-5 py-12 text-center text-muted">
+                    <td colSpan={8} className="px-5 py-12 text-center text-muted">
                       <Search className="mx-auto mb-2 h-8 w-8 opacity-30" />
                       No requests match your filters
                     </td>
@@ -112,23 +113,33 @@ export function AdminRequestsPage() {
                         </Link>
                       </td>
                       <td className="px-5 py-3">
+                        <p className="font-medium">{getCustomerName(row.form_data as Record<string, unknown>)}</p>
+                      </td>
+                      <td className="px-5 py-3">
                         <p className="font-medium">{row.service_name}</p>
                         <p className="text-xs capitalize text-muted">{row.category}</p>
                       </td>
-                      <td className="px-5 py-3 text-muted">{row.contact_phone || '—'}</td>
-                      <td className="px-5 py-3 font-medium">{formatNaira(row.amount_paid)}</td>
-                      <td className="px-5 py-3"><AdminStatusBadge status={row.status} /></td>
-                      <td className="px-5 py-3">
-                        {row.download_available ? (
-                          <span className="text-xs font-medium text-green-600">Available</span>
-                        ) : (
-                          <span className="text-xs text-muted">Pending</span>
-                        )}
-                      </td>
                       <td className="px-5 py-3 text-muted">
-                        {new Date(row.submitted_at).toLocaleDateString('en-NG', {
-                          day: 'numeric', month: 'short', year: 'numeric',
-                        })}
+                        <p>{row.contact_phone || '—'}</p>
+                        {row.contact_email && <p className="text-xs">{row.contact_email}</p>}
+                      </td>
+                      <td className="px-5 py-3 font-medium">{formatNaira(row.amount_paid)}</td>
+                      <td className="px-5 py-3">
+                        <span className={`text-xs font-medium capitalize ${
+                          row.payment_status === 'paid' ? 'text-green-600'
+                            : row.payment_status === 'failed' ? 'text-red-600'
+                              : 'text-gold-600'
+                        }`}>
+                          {row.payment_status}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3"><AdminStatusBadge status={row.status} /></td>
+                      <td className="px-5 py-3 text-muted">
+                        {row.submitted_at
+                          ? new Date(row.submitted_at).toLocaleDateString('en-NG', {
+                            day: 'numeric', month: 'short', year: 'numeric',
+                          })
+                          : '—'}
                       </td>
                     </tr>
                   ))

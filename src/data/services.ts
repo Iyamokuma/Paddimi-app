@@ -1,4 +1,4 @@
-import type { ServiceItem, TrackedRequest } from '../types'
+import type { ServiceItem } from '../types'
 
 export const NOTIFICATION_EMAILS = [
   'paddimi.mc@gmail.com',
@@ -186,55 +186,4 @@ export function generateRedemptionCode(): string {
     code += chars[Math.floor(Math.random() * chars.length)]
   }
   return code
-}
-
-export const mockTrackedRequests: Record<string, TrackedRequest> = {
-  S4B1: {
-    code: 'S4B1',
-    serviceName: 'Affidavit of Loss of SIM Card',
-    category: 'affidavit',
-    status: 'submitted',
-    submittedAt: '2026-06-29T11:00:00',
-    estimatedReady: '2026-06-29T11:15:00',
-    customerName: 'Fatima Ibrahim',
-    downloadAvailable: false,
-    expiresAt: '2027-06-29',
-    timeline: [
-      { status: 'submitted', label: 'Request Submitted', date: 'Jun 29, 2026 · 11:00 AM', completed: true },
-      { status: 'processing', label: 'Document Processing', date: 'Pending', completed: false },
-      { status: 'approved', label: 'Approved — Ready for Download', date: 'Pending', completed: false },
-    ],
-  },
-  K7M2: {
-    code: 'K7M2',
-    serviceName: 'Affidavit of Change of Name',
-    category: 'affidavit',
-    status: 'processing',
-    submittedAt: '2026-06-29T10:30:00',
-    estimatedReady: '2026-06-29T10:45:00',
-    customerName: 'Adaeze Okonkwo',
-    downloadAvailable: false,
-    expiresAt: '2027-06-29',
-    timeline: [
-      { status: 'submitted', label: 'Request Submitted', date: 'Jun 29, 2026 · 10:30 AM', completed: true },
-      { status: 'processing', label: 'Document Processing', date: 'Jun 29, 2026 · 10:32 AM', completed: true },
-      { status: 'approved', label: 'Approved — Ready for Download', date: 'Expected · 10:45 AM', completed: false },
-    ],
-  },
-  R3W8: {
-    code: 'R3W8',
-    serviceName: 'Name Change Publication',
-    category: 'newspaper',
-    status: 'approved',
-    submittedAt: '2026-06-28T14:00:00',
-    estimatedReady: '2026-06-29T14:00:00',
-    customerName: 'Chukwuemeka Bello',
-    downloadAvailable: true,
-    expiresAt: '2027-06-28',
-    timeline: [
-      { status: 'submitted', label: 'Request Submitted', date: 'Jun 28, 2026', completed: true },
-      { status: 'processing', label: 'Sent to Newspaper', date: 'Jun 28, 2026', completed: true },
-      { status: 'approved', label: 'Approved — Ready for Download', date: 'Jun 29, 2026', completed: true },
-    ],
-  },
 }

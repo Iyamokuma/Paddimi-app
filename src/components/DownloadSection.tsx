@@ -71,7 +71,7 @@ export function DownloadSection() {
               setSearched(false)
               setDownloaded(false)
             }}
-            placeholder="e.g. K7M2"
+            placeholder="XXXX"
             maxLength={4}
             className="font-mono text-xl tracking-[0.3em] uppercase text-center"
           />
@@ -83,16 +83,6 @@ export function DownloadSection() {
             Verify
           </Button>
         </div>
-
-        <p className="mt-3 text-xs text-muted">
-          Demo codes:{' '}
-          <button type="button" onClick={() => { setCode('K7M2'); setSearched(true) }} className="font-mono text-brand-600 hover:underline">K7M2</button>
-          {' '}(processing) ·{' '}
-          <button type="button" onClick={() => { setCode('S4B1'); setSearched(true) }} className="font-mono text-brand-600 hover:underline">S4B1</button>
-          {' '}(submitted) ·{' '}
-          <button type="button" onClick={() => { setCode('R3W8'); setSearched(true) }} className="font-mono text-brand-600 hover:underline">R3W8</button>
-          {' '}(approved)
-        </p>
 
         {loading && (
           <div className="mt-6 flex justify-center">
