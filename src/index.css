@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Montserrat", system-ui, sans-serif;
+
+  /* Deep purple — primary brand */
+  --color-brand-50: #f3eef8;
+  --color-brand-100: #e4d9f0;
+  --color-brand-200: #c9b3e1;
+  --color-brand-300: #a888cc;
+  --color-brand-400: #875db3;
+  --color-brand-500: #3b1e54;
+  --color-brand-600: #331a4d;
+  --color-brand-700: #2a1640;
+  --color-brand-800: #211233;
+  --color-brand-900: #180d26;
+
+  /* Metallic gold — accent */
+  --color-gold-50: #faf6eb;
+  --color-gold-100: #f2e8cc;
+  --color-gold-200: #e5d099;
+  --color-gold-300: #d4b76a;
+  --color-gold-400: #c5a059;
+  --color-gold-500: #b8923f;
+  --color-gold-600: #9a7830;
+
+  /* Forest green — secondary / success */
+  --color-green-50: #edf5f1;
+  --color-green-100: #d0e8dc;
+  --color-green-200: #a3d1b9;
+  --color-green-300: #6fb392;
+  --color-green-400: #3d9170;
+  --color-green-500: #1b4d3e;
+  --color-green-600: #164032;
+  --color-green-700: #113327;
+
+  --color-surface: #f9f8f3;
+  --color-surface-elevated: #ffffff;
+  --color-border: #e8e4df;
+  --color-muted: #6b6574;
+  --color-foreground: #1a1224;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-surface font-sans text-foreground antialiased;
+  }
+
+  ::selection {
+    @apply bg-brand-200 text-brand-900;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .gradient-hero {
+    background: linear-gradient(145deg, #180d26 0%, #331a4d 40%, #3b1e54 70%, #2a1640 100%);
+  }
+
+  .gradient-gold {
+    background: linear-gradient(135deg, #d4b76a 0%, #c5a059 50%, #b8923f 100%);
+  }
+
+  .gradient-purple-soft {
+    background: linear-gradient(180deg, #f3eef8 0%, #f9f8f3 100%);
+  }
+
+  .glass {
+    @apply border border-white/10 bg-white/5 backdrop-blur-md;
+  }
+
+  .gold-line {
+    background: linear-gradient(90deg, transparent, #c5a059 20%, #d4b76a 50%, #c5a059 80%, transparent);
+    height: 2px;
+  }
+
+  .pattern-dots {
+    background-image: radial-gradient(circle, #3b1e5408 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}

@@ -1,0 +1,240 @@
+import type { ServiceItem, TrackedRequest } from '../types'
+
+export const NOTIFICATION_EMAILS = [
+  'paddimi.mc@gmail.com',
+  'paddimi.mc@yahoo.com',
+] as const
+
+export const AFFIDAVIT_TURNAROUND = '15 minutes'
+export const NEWSPAPER_TURNAROUND = '24 hours'
+export const CODE_VALIDITY = '1 year'
+
+export const affidavitServices: ServiceItem[] = [
+  {
+    id: 'change-of-name',
+    category: 'affidavit',
+    name: 'Affidavit of Change of Name',
+    description: 'Sworn declaration for official change of name, including marriage-related changes.',
+    price: 15000,
+    turnaround: AFFIDAVIT_TURNAROUND,
+    icon: 'UserPen',
+  },
+  {
+    id: 'rearrangement-of-name',
+    category: 'affidavit',
+    name: 'Affidavit of Rearrangement of Name',
+    description: 'Correct the order of your surname, first name, and middle name on official records.',
+    price: 15000,
+    turnaround: AFFIDAVIT_TURNAROUND,
+    icon: 'ArrowLeftRight',
+  },
+  {
+    id: 'correction-of-name',
+    category: 'affidavit',
+    name: 'Affidavit of Correction of Name',
+    description: 'Fix wrong spelling, omission, or addition of name on official documents.',
+    price: 15000,
+    turnaround: AFFIDAVIT_TURNAROUND,
+    icon: 'PenLine',
+  },
+  {
+    id: 'correction-of-dob',
+    category: 'affidavit',
+    name: 'Affidavit of Correction of Date of Birth',
+    description: 'Sworn correction of wrong date of birth on official documents.',
+    price: 15000,
+    turnaround: AFFIDAVIT_TURNAROUND,
+    icon: 'Calendar',
+  },
+  {
+    id: 'confirmation-of-name',
+    category: 'affidavit',
+    name: 'Affidavit of Confirmation of Name',
+    description: 'Confirm your legal name and any alternate names for official purposes.',
+    price: 12000,
+    turnaround: AFFIDAVIT_TURNAROUND,
+    icon: 'BadgeCheck',
+  },
+  {
+    id: 'age-declaration',
+    category: 'affidavit',
+    name: 'Affidavit of Age Declaration',
+    description: 'Declare age for a beneficiary when birth certificate is unavailable or missing.',
+    price: 12000,
+    turnaround: AFFIDAVIT_TURNAROUND,
+    icon: 'CalendarDays',
+  },
+  {
+    id: 'declaration-of-marriage',
+    category: 'affidavit',
+    name: 'Affidavit of Declaration of Marriage',
+    description: 'Statutory declaration of marriage under customary or Islamic law.',
+    price: 18000,
+    turnaround: AFFIDAVIT_TURNAROUND,
+    icon: 'Heart',
+  },
+  {
+    id: 'death',
+    category: 'affidavit',
+    name: 'Affidavit of Death',
+    description: 'Sworn declaration of death for legal and administrative purposes.',
+    price: 15000,
+    turnaround: AFFIDAVIT_TURNAROUND,
+    icon: 'Flower2',
+  },
+  {
+    id: 'loss-of-sim',
+    category: 'affidavit',
+    name: 'Affidavit of Loss of SIM Card',
+    description: 'Declaration of lost SIM card for network provider and recovery processes.',
+    price: 10000,
+    turnaround: AFFIDAVIT_TURNAROUND,
+    icon: 'Smartphone',
+  },
+  {
+    id: 'change-vehicle-plate',
+    category: 'affidavit',
+    name: 'Affidavit for Change of Vehicle Plate Number',
+    description: 'Sworn statement for change of vehicle registration plate number.',
+    price: 15000,
+    turnaround: AFFIDAVIT_TURNAROUND,
+    icon: 'Car',
+  },
+  {
+    id: 'change-engine-number',
+    category: 'affidavit',
+    name: 'Affidavit of Change of Engine Number',
+    description: 'Declaration for change of vehicle engine number after replacement or purchase.',
+    price: 15000,
+    turnaround: AFFIDAVIT_TURNAROUND,
+    icon: 'Cog',
+  },
+]
+
+export const newspaperServices: ServiceItem[] = [
+  {
+    id: 'name-change-publication',
+    category: 'newspaper',
+    name: 'Name Change Publication',
+    description: 'Newspaper publication for official name change — requires affidavit and marriage certificate.',
+    price: 25000,
+    turnaround: NEWSPAPER_TURNAROUND,
+    icon: 'Newspaper',
+    requiredDocuments: ['Affidavit', 'Marriage Certificate'],
+  },
+  {
+    id: 'name-correction-publication',
+    category: 'newspaper',
+    name: 'Name Correction Publication',
+    description: 'Publication for name correction — requires affidavit and NIN.',
+    price: 22000,
+    turnaround: NEWSPAPER_TURNAROUND,
+    icon: 'PenLine',
+    requiredDocuments: ['Affidavit', 'NIN'],
+  },
+  {
+    id: 'loss-of-documents-publication',
+    category: 'newspaper',
+    name: 'Loss of Documents Publication',
+    description: 'Public notice for lost documents such as certificates, NIN, or licences.',
+    price: 20000,
+    turnaround: NEWSPAPER_TURNAROUND,
+    icon: 'AlertCircle',
+    requiredDocuments: ['Affidavit of Loss'],
+  },
+  {
+    id: 'public-announcements',
+    category: 'newspaper',
+    name: 'Public Announcements',
+    description: 'General public notices for legal, community, or personal matters.',
+    price: 18000,
+    turnaround: NEWSPAPER_TURNAROUND,
+    icon: 'Megaphone',
+  },
+  {
+    id: 'congratulatory-messages',
+    category: 'newspaper',
+    name: 'Congratulatory Messages',
+    description: 'Celebrate graduations, weddings, promotions, anniversaries, childbirth, and more.',
+    price: 15000,
+    turnaround: NEWSPAPER_TURNAROUND,
+    icon: 'PartyPopper',
+  },
+]
+
+export const nigerianStates = [
+  'Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue', 'Borno',
+  'Cross River', 'Delta', 'Ebonyi', 'Edo', 'Ekiti', 'Enugu', 'FCT', 'Gombe',
+  'Imo', 'Jigawa', 'Kaduna', 'Kano', 'Katsina', 'Kebbi', 'Kogi', 'Kwara',
+  'Lagos', 'Nasarawa', 'Niger', 'Ogun', 'Ondo', 'Osun', 'Oyo', 'Plateau',
+  'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara',
+]
+
+export function formatNaira(amount: number): string {
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    minimumFractionDigits: 0,
+  }).format(amount)
+}
+
+/** 4-character alphanumeric redemption code */
+export function generateRedemptionCode(): string {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+  let code = ''
+  for (let i = 0; i < 4; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)]
+  }
+  return code
+}
+
+export const mockTrackedRequests: Record<string, TrackedRequest> = {
+  S4B1: {
+    code: 'S4B1',
+    serviceName: 'Affidavit of Loss of SIM Card',
+    category: 'affidavit',
+    status: 'submitted',
+    submittedAt: '2026-06-29T11:00:00',
+    estimatedReady: '2026-06-29T11:15:00',
+    customerName: 'Fatima Ibrahim',
+    downloadAvailable: false,
+    expiresAt: '2027-06-29',
+    timeline: [
+      { status: 'submitted', label: 'Request Submitted', date: 'Jun 29, 2026 · 11:00 AM', completed: true },
+      { status: 'processing', label: 'Document Processing', date: 'Pending', completed: false },
+      { status: 'approved', label: 'Approved — Ready for Download', date: 'Pending', completed: false },
+    ],
+  },
+  K7M2: {
+    code: 'K7M2',
+    serviceName: 'Affidavit of Change of Name',
+    category: 'affidavit',
+    status: 'processing',
+    submittedAt: '2026-06-29T10:30:00',
+    estimatedReady: '2026-06-29T10:45:00',
+    customerName: 'Adaeze Okonkwo',
+    downloadAvailable: false,
+    expiresAt: '2027-06-29',
+    timeline: [
+      { status: 'submitted', label: 'Request Submitted', date: 'Jun 29, 2026 · 10:30 AM', completed: true },
+      { status: 'processing', label: 'Document Processing', date: 'Jun 29, 2026 · 10:32 AM', completed: true },
+      { status: 'approved', label: 'Approved — Ready for Download', date: 'Expected · 10:45 AM', completed: false },
+    ],
+  },
+  R3W8: {
+    code: 'R3W8',
+    serviceName: 'Name Change Publication',
+    category: 'newspaper',
+    status: 'approved',
+    submittedAt: '2026-06-28T14:00:00',
+    estimatedReady: '2026-06-29T14:00:00',
+    customerName: 'Chukwuemeka Bello',
+    downloadAvailable: true,
+    expiresAt: '2027-06-28',
+    timeline: [
+      { status: 'submitted', label: 'Request Submitted', date: 'Jun 28, 2026', completed: true },
+      { status: 'processing', label: 'Sent to Newspaper', date: 'Jun 28, 2026', completed: true },
+      { status: 'approved', label: 'Approved — Ready for Download', date: 'Jun 29, 2026', completed: true },
+    ],
+  },
+}
