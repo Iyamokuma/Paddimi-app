@@ -5,7 +5,6 @@ export const NOTIFICATION_EMAILS = [
   'paddimi.mc@yahoo.com',
 ] as const
 
-export const AFFIDAVIT_TURNAROUND = '15 minutes'
 export const NEWSPAPER_TURNAROUND = '24 hours'
 export const CODE_VALIDITY = '1 year'
 
@@ -16,7 +15,6 @@ export const affidavitServices: ServiceItem[] = [
     name: 'Affidavit of Change of Name',
     description: 'Sworn declaration for official change of name, including marriage-related changes.',
     price: 15000,
-    turnaround: AFFIDAVIT_TURNAROUND,
     icon: 'UserPen',
   },
   {
@@ -25,7 +23,6 @@ export const affidavitServices: ServiceItem[] = [
     name: 'Affidavit of Rearrangement of Name',
     description: 'Correct the order of your surname, first name, and middle name on official records.',
     price: 15000,
-    turnaround: AFFIDAVIT_TURNAROUND,
     icon: 'ArrowLeftRight',
   },
   {
@@ -34,7 +31,6 @@ export const affidavitServices: ServiceItem[] = [
     name: 'Affidavit of Correction of Name',
     description: 'Fix wrong spelling, omission, or addition of name on official documents.',
     price: 15000,
-    turnaround: AFFIDAVIT_TURNAROUND,
     icon: 'PenLine',
   },
   {
@@ -43,7 +39,6 @@ export const affidavitServices: ServiceItem[] = [
     name: 'Affidavit of Correction of Date of Birth',
     description: 'Sworn correction of wrong date of birth on official documents.',
     price: 15000,
-    turnaround: AFFIDAVIT_TURNAROUND,
     icon: 'Calendar',
   },
   {
@@ -52,7 +47,6 @@ export const affidavitServices: ServiceItem[] = [
     name: 'Affidavit of Confirmation of Name',
     description: 'Confirm your legal name and any alternate names for official purposes.',
     price: 12000,
-    turnaround: AFFIDAVIT_TURNAROUND,
     icon: 'BadgeCheck',
   },
   {
@@ -61,7 +55,6 @@ export const affidavitServices: ServiceItem[] = [
     name: 'Affidavit of Age Declaration',
     description: 'Declare age for a beneficiary when birth certificate is unavailable or missing.',
     price: 12000,
-    turnaround: AFFIDAVIT_TURNAROUND,
     icon: 'CalendarDays',
   },
   {
@@ -70,7 +63,6 @@ export const affidavitServices: ServiceItem[] = [
     name: 'Affidavit of Declaration of Marriage',
     description: 'Statutory declaration of marriage under customary or Islamic law.',
     price: 18000,
-    turnaround: AFFIDAVIT_TURNAROUND,
     icon: 'Heart',
   },
   {
@@ -79,7 +71,6 @@ export const affidavitServices: ServiceItem[] = [
     name: 'Affidavit of Death',
     description: 'Sworn declaration of death for legal and administrative purposes.',
     price: 15000,
-    turnaround: AFFIDAVIT_TURNAROUND,
     icon: 'Flower2',
   },
   {
@@ -88,7 +79,6 @@ export const affidavitServices: ServiceItem[] = [
     name: 'Affidavit of Loss of SIM Card',
     description: 'Declaration of lost SIM card for network provider and recovery processes.',
     price: 10000,
-    turnaround: AFFIDAVIT_TURNAROUND,
     icon: 'Smartphone',
   },
   {
@@ -97,7 +87,6 @@ export const affidavitServices: ServiceItem[] = [
     name: 'Affidavit for Change of Vehicle Plate Number',
     description: 'Sworn statement for change of vehicle registration plate number.',
     price: 15000,
-    turnaround: AFFIDAVIT_TURNAROUND,
     icon: 'Car',
   },
   {
@@ -106,7 +95,6 @@ export const affidavitServices: ServiceItem[] = [
     name: 'Affidavit of Change of Engine Number',
     description: 'Declaration for change of vehicle engine number after replacement or purchase.',
     price: 15000,
-    turnaround: AFFIDAVIT_TURNAROUND,
     icon: 'Cog',
   },
 ]

@@ -210,12 +210,6 @@ export function TrackRequestPage() {
           </div>
         )}
 
-        <div className="mt-12 text-center">
-          <p className="text-sm text-muted">
-            Need help?{' '}
-            <a href="mailto:paddimi.mc@gmail.com" className="text-brand-600 hover:underline">paddimi.mc@gmail.com</a>
-          </p>
-        </div>
       </div>
     </>
   )

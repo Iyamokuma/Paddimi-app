@@ -155,4 +155,4 @@ Admin: Start Processing → Upload PDF → Approve
 Customer: Enter code on homepage → secure download URL
 ```
 
-Admin alert emails: `paddimi.mc@gmail.com`, `paddimi.mc@yahoo.com`
+Admin alert emails are configured in the system.

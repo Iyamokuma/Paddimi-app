@@ -14,14 +14,14 @@ import { Card } from '../components/ui/Card'
 import { DownloadSection } from '../components/DownloadSection'
 import {
   affidavitServices, newspaperServices, formatNaira,
-  AFFIDAVIT_TURNAROUND, NEWSPAPER_TURNAROUND,
+  NEWSPAPER_TURNAROUND,
 } from '../data/services'
 
 const stats = [
   { value: '11', label: 'Affidavit Types' },
   { value: '5', label: 'Publication Types' },
-  { value: AFFIDAVIT_TURNAROUND, label: 'Affidavit Turnaround' },
   { value: NEWSPAPER_TURNAROUND, label: 'Publication Turnaround' },
+  { value: '100%', label: 'Digital Delivery' },
 ]
 
 const steps = [
@@ -54,7 +54,7 @@ export function HomePage() {
               </h1>
 
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-brand-100/75">
-                Affidavits ready in 15 minutes. Newspaper publications within 24 hours.
+                Legal affidavits and newspaper publications — entirely online.
                 No account, no office visits — submit, pay, and download with your redemption code.
               </p>
 
@@ -76,7 +76,7 @@ export function HomePage() {
               <div className="mt-8 flex flex-wrap items-center gap-6 text-sm text-brand-200/60">
                 <span className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-gold-400" />
-                  Affidavits in {AFFIDAVIT_TURNAROUND}
+                  Publications in {NEWSPAPER_TURNAROUND}
                 </span>
                 <span className="flex items-center gap-2">
                   <Shield className="h-4 w-4 text-gold-400" />
@@ -161,7 +161,7 @@ export function HomePage() {
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-500">Services</p>
               <h2 className="mt-2 text-3xl font-bold text-foreground sm:text-4xl">Affidavit Services</h2>
               <p className="mt-3 max-w-xl text-muted">
-                11 affidavit types — ready in {AFFIDAVIT_TURNAROUND}. Each form captures the exact fields required by law.
+                11 affidavit types. Each form captures the exact fields required by law.
               </p>
             </div>
             <Link to="/affidavit">
@@ -183,10 +183,6 @@ export function HomePage() {
                 </div>
                 <p className="mt-2 text-sm leading-relaxed text-muted line-clamp-2">
                   {service.description}
-                </p>
-                <p className="mt-3 text-xs font-medium text-green-600">
-                  <Clock className="mr-1 inline h-3 w-3" />
-                  {service.turnaround} turnaround
                 </p>
               </Card>
             ))}
