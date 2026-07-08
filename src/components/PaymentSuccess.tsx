@@ -12,14 +12,14 @@ interface PaymentSuccessProps {
   serviceName: string
   contactPhone: string
   contactEmail: string
-  notifyChannel: NotifyChannel
+  notifyChannels: NotifyChannel[]
   total: number
   category: ServiceCategory
   turnaround?: string
 }
 
 export function PaymentSuccess({
-  code, serviceName, contactPhone, contactEmail, notifyChannel, total, category, turnaround,
+  code, serviceName, contactPhone, contactEmail, notifyChannels, total, category, turnaround,
 }: PaymentSuccessProps) {
   const [copied, setCopied] = useState(false)
 
@@ -28,6 +28,10 @@ export function PaymentSuccess({
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
+
+  const channelLabel = notifyChannels.length === 2
+    ? 'SMS and email'
+    : notifyChannels.includes('sms') ? 'SMS' : 'email'
 
   return (
     <>
@@ -79,21 +83,22 @@ export function PaymentSuccess({
         </div>
 
         <div className="mt-6 rounded-2xl border border-border bg-white p-6 shadow-sm">
-          <h3 className="font-semibold">Code sent via {notifyChannel === 'sms' ? 'SMS' : 'email'}</h3>
+          <h3 className="font-semibold">Code sent via {channelLabel}</h3>
           <div className="mt-4 space-y-3">
-            {notifyChannel === 'sms' ? (
+            {notifyChannels.includes('sms') && contactPhone && (
               <div className="flex items-center gap-3 text-sm">
                 <MessageSquare className="h-5 w-5 text-brand-500" />
-                <span>Your code was sent by SMS to <strong>{contactPhone}</strong></span>
+                <span>SMS sent to <strong>{contactPhone}</strong></span>
               </div>
-            ) : (
+            )}
+            {notifyChannels.includes('email') && contactEmail && (
               <div className="flex items-center gap-3 text-sm">
                 <Mail className="h-5 w-5 text-brand-500" />
-                <span>Your code was sent by email to <strong>{contactEmail}</strong></span>
+                <span>Email sent to <strong>{contactEmail}</strong></span>
               </div>
             )}
             <p className="text-xs text-muted">
-              You will also be notified via the same channel when your document is ready for download.
+              You will be notified on the same {notifyChannels.length === 2 ? 'channels' : 'channel'} when your document is ready.
             </p>
           </div>
         </div>
@@ -102,7 +107,7 @@ export function PaymentSuccess({
           <p className="font-medium text-foreground">What happens next?</p>
           <ol className="mt-3 list-inside list-decimal space-y-2">
             <li>Your request is processed{turnaround ? ` — expected within ${turnaround}` : ''}</li>
-            <li>You&apos;ll receive a {notifyChannel === 'sms' ? 'text message' : 'email'} when your document is ready</li>
+            <li>You&apos;ll receive a {channelLabel.toLowerCase()} notification when your document is ready</li>
             <li>Enter your code on the homepage download section to get your document</li>
             <li>Documents are shared electronically only — no physical collection</li>
           </ol>

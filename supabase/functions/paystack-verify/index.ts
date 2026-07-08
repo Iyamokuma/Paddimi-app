@@ -59,16 +59,14 @@ async function notifyNewOrder(
     })
   }
 
-  const formData = request.form_data ?? {}
-  const notifyChannel = formData.notifyChannel === 'email' ? 'email' : 'sms'
-
   // Admin alert (fans out to both admin inboxes)
   await notify('email', 'paddimi.mc@gmail.com', 'new_order')
 
-  // Customer confirmation with redemption code via their chosen channel
-  if (notifyChannel === 'email' && request.contact_email) {
+  // Customer confirmation — send to every channel provided
+  if (request.contact_email) {
     await notify('email', request.contact_email, 'order_confirmed')
-  } else if (request.contact_phone) {
+  }
+  if (request.contact_phone) {
     await notify('sms', request.contact_phone, 'order_confirmed')
   }
 }

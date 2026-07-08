@@ -17,10 +17,9 @@ import {
 } from '../data/newspaperFields'
 import { validateFields } from '../data/affidavitFields'
 import { PaymentSuccess } from '../components/PaymentSuccess'
-import { NotifyChannelPicker } from '../components/NotifyChannelPicker'
 import { PageHeader } from '../components/layout/PageHeader'
 import { checkoutService } from '../lib/api/payments'
-import { contactChannelValid, type NotifyChannel } from '../lib/customer'
+import { getNotifyChannels, hasContactInfo } from '../lib/customer'
 
 const iconMap: Record<string, LucideIcon> = {
   Newspaper, AlertCircle, Megaphone, PenLine, PartyPopper,
@@ -38,7 +37,6 @@ export function NewspaperRequestPage() {
   const [selectedService, setSelectedService] = useState('')
   const [values, setValues] = useState<Record<string, string>>({})
   const [files, setFiles] = useState<Record<string, File[]>>({})
-  const [notifyChannel, setNotifyChannel] = useState<NotifyChannel>('sms')
   const [completed, setCompleted] = useState(false)
   const [redemptionCode, setRedemptionCode] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -54,6 +52,7 @@ export function NewspaperRequestPage() {
     [selectedService],
   )
   const total = service?.price ?? 0
+  const notifyChannels = getNotifyChannels(values.phone, values.email)
 
   const updateValue = (id: string, value: string) => {
     setValues((prev) => ({ ...prev, [id]: value }))
@@ -67,9 +66,9 @@ export function NewspaperRequestPage() {
     switch (step) {
       case 1: return !!selectedService
       case 2: return validateFields(textFields, values, files)
-        && contactChannelValid(notifyChannel, values.phone, values.email)
+        && hasContactInfo(values.phone, values.email)
       case 3: return validateFields(fileFields, values, files)
-      case 4: return contactChannelValid(notifyChannel, values.phone, values.email)
+      case 4: return hasContactInfo(values.phone, values.email)
       default: return false
     }
   }
@@ -87,7 +86,7 @@ export function NewspaperRequestPage() {
         contactPhone: values.phone ?? '',
         contactEmail: values.email,
         referralCode: values.referralCode,
-        formData: { ...values, notifyChannel },
+        formData: values,
         paymentMethod: 'paystack',
         amountPaid: total,
         files,
@@ -116,7 +115,7 @@ export function NewspaperRequestPage() {
         serviceName={service.name}
         contactPhone={values.phone ?? ''}
         contactEmail={values.email ?? ''}
-        notifyChannel={notifyChannel}
+        notifyChannels={notifyChannels}
         total={total}
         category="newspaper"
         turnaround={service.turnaround}
@@ -194,10 +193,9 @@ export function NewspaperRequestPage() {
         {step === 2 && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-lg font-semibold">Contact &amp; publication details</h2>
-              <p className="mt-1 text-sm text-muted">Choose how to receive your code, then complete the form.</p>
+              <h2 className="text-lg font-semibold">Publication details</h2>
+              <p className="mt-1 text-sm text-muted">Enter phone, email, or both — updates go to every contact you provide.</p>
             </div>
-            <NotifyChannelPicker value={notifyChannel} onChange={setNotifyChannel} />
             <DynamicFormFields
               fields={textFields}
               values={values}
@@ -275,8 +273,6 @@ export function NewspaperRequestPage() {
               </Card>
             </div>
 
-            <NotifyChannelPicker value={notifyChannel} onChange={setNotifyChannel} />
-
             <div className="rounded-xl border border-brand-100 bg-brand-50 p-4 text-sm text-brand-700">
               <div className="flex items-start gap-2">
                 <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
@@ -284,8 +280,13 @@ export function NewspaperRequestPage() {
                   <p className="font-medium">Secure payment via Paystack</p>
                   <p className="mt-1 text-brand-600">
                     Pay with debit/credit card, bank transfer, or USSD. After payment is confirmed,
-                    your code will be sent via {notifyChannel === 'sms' ? 'SMS' : 'email'} to{' '}
-                    <strong>{notifyChannel === 'sms' ? values.phone : values.email}</strong>.
+                    your code will be sent to{' '}
+                    {notifyChannels.length === 2
+                      ? 'your phone and email'
+                      : notifyChannels.includes('sms')
+                        ? `your phone (${values.phone})`
+                        : `your email (${values.email})`}
+                    .
                   </p>
                 </div>
               </div>

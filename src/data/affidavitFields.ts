@@ -28,14 +28,14 @@ export const AFFIDAVIT_SPECIFIC_FIELDS: Record<string, FormFieldDef[]> = {
     { id: 'spouseName', label: 'Spouse Name', type: 'text', required: true, dependsOn: { field: 'reason', value: 'marriage' } },
     { id: 'spouseAddress', label: 'Spouse Address', type: 'text', required: true, fullWidth: true, dependsOn: { field: 'reason', value: 'marriage' } },
     { id: 'dateOfMarriage', label: 'Date of Marriage', type: 'date', required: true, dependsOn: { field: 'reason', value: 'marriage' } },
-    { id: 'passport', label: 'Passport Photo', type: 'file', required: true, accept: '.jpg,.jpeg,.png' },
+    { id: 'passport', label: 'Passport Photo', type: 'livePhoto', required: true },
   ],
   'rearrangement-of-name': [
     { id: 'correctSurname', label: 'Correct Arrangement of Surname', type: 'text', required: true },
     { id: 'correctFirstName', label: 'Correct Arrangement of First Name', type: 'text', required: true },
     { id: 'correctMiddleName', label: 'Correct Arrangement of Middle Name', type: 'text', required: true },
     { id: 'documentAffected', label: 'Document Affected', type: 'text', required: true, fullWidth: true },
-    { id: 'passportPhoto', label: 'Passport Photo', type: 'file', required: true, accept: '.jpg,.jpeg,.png' },
+    { id: 'passportPhoto', label: 'Passport Photo', type: 'livePhoto', required: true },
   ],
   'correction-of-name': [
     { id: 'wrongName', label: 'Wrong Name', type: 'text', required: true },
@@ -66,18 +66,18 @@ export const AFFIDAVIT_SPECIFIC_FIELDS: Record<string, FormFieldDef[]> = {
         { value: 'voters-card', label: 'Voters Card' },
       ],
     },
-    { id: 'passportPhoto', label: 'Passport Photo', type: 'file', required: true, accept: '.jpg,.jpeg,.png' },
+    { id: 'passportPhoto', label: 'Passport Photo', type: 'livePhoto', required: true },
   ],
   'correction-of-dob': [
     { id: 'wrongDateOfBirth', label: 'Wrong Date of Birth', type: 'date', required: true },
     { id: 'correctDateOfBirth', label: 'Correct Date of Birth', type: 'date', required: true },
     { id: 'errorDocument', label: 'Error Document', type: 'text', required: true, fullWidth: true },
-    { id: 'passportPhoto', label: 'Passport Photo', type: 'file', required: true, accept: '.jpg,.jpeg,.png' },
+    { id: 'passportPhoto', label: 'Passport Photo', type: 'livePhoto', required: true },
   ],
   'confirmation-of-name': [
     { id: 'nameForConfirmation', label: 'Name for Confirmation', type: 'text', required: true },
     { id: 'alternateNameForConfirmation', label: 'Alternate Name for Confirmation', type: 'text', required: true },
-    { id: 'passportPhoto', label: 'Passport Photo', type: 'file', required: true, accept: '.jpg,.jpeg,.png' },
+    { id: 'passportPhoto', label: 'Passport Photo', type: 'livePhoto', required: true },
   ],
   'age-declaration': [
     { id: 'beneficiaryName', label: "Beneficiary's Name", type: 'text', required: true },
@@ -110,8 +110,8 @@ export const AFFIDAVIT_SPECIFIC_FIELDS: Record<string, FormFieldDef[]> = {
         { value: 'yoruba', label: 'Yoruba' },
       ],
     },
-    { id: 'passportPhotoBride', label: 'Passport Photo of Bride', type: 'file', required: true, accept: '.jpg,.jpeg,.png' },
-    { id: 'passportPhotoGroom', label: 'Passport Photo of Groom', type: 'file', required: true, accept: '.jpg,.jpeg,.png' },
+    { id: 'passportPhotoBride', label: 'Passport Photo of Bride', type: 'livePhoto', required: true },
+    { id: 'passportPhotoGroom', label: 'Passport Photo of Groom', type: 'livePhoto', required: true },
   ],
   'death': [
     { id: 'nameOfDeceased', label: 'Name of Deceased', type: 'text', required: true },
@@ -137,7 +137,7 @@ export const AFFIDAVIT_SPECIFIC_FIELDS: Record<string, FormFieldDef[]> = {
     { id: 'simNumber', label: 'SIM Number', type: 'text', required: true },
     { id: 'dateOfLost', label: 'Date of Lost', type: 'date', required: true },
     { id: 'placeOfLost', label: 'Place of Lost', type: 'text', required: true, fullWidth: true },
-    { id: 'passportPhoto', label: 'Passport Photo', type: 'file', required: true, accept: '.jpg,.jpeg,.png' },
+    { id: 'passportPhoto', label: 'Passport Photo', type: 'livePhoto', required: true },
   ],
   'change-vehicle-plate': [
     { id: 'nameOfVehicle', label: 'Name of Vehicle', type: 'text', required: true },
@@ -147,7 +147,7 @@ export const AFFIDAVIT_SPECIFIC_FIELDS: Record<string, FormFieldDef[]> = {
     { id: 'nameOfSeller', label: 'Name of Seller', type: 'text', required: true },
     { id: 'newPlateNumber', label: 'New Plate Number', type: 'text', required: true },
     { id: 'placeOfPurchase', label: 'Place of Purchase', type: 'text', required: true, fullWidth: true },
-    { id: 'passportPhoto', label: 'Passport Photo', type: 'file', required: true, accept: '.jpg,.jpeg,.png' },
+    { id: 'passportPhoto', label: 'Passport Photo', type: 'livePhoto', required: true },
   ],
   'change-engine-number': [
     { id: 'modelOfVehicle', label: 'Model of Vehicle', type: 'text', required: true },
@@ -157,7 +157,7 @@ export const AFFIDAVIT_SPECIFIC_FIELDS: Record<string, FormFieldDef[]> = {
     { id: 'nameOfSeller', label: 'Name of Seller', type: 'text', required: true },
     { id: 'newEngineNo', label: 'New Engine No', type: 'text', required: true },
     { id: 'placeOfPurchase', label: 'Place of Purchase of Engine', type: 'text', required: true, fullWidth: true },
-    { id: 'passportPhoto', label: 'Passport Photo', type: 'file', required: true, accept: '.jpg,.jpeg,.png' },
+    { id: 'passportPhoto', label: 'Passport Photo', type: 'livePhoto', required: true },
   ],
 }
 
@@ -166,11 +166,11 @@ export function getAffidavitFields(serviceId: string): FormFieldDef[] {
 }
 
 export function getTextFields(fields: FormFieldDef[]): FormFieldDef[] {
-  return fields.filter((f) => f.type !== 'file')
+  return fields.filter((f) => f.type !== 'file' && f.type !== 'livePhoto')
 }
 
 export function getFileFields(fields: FormFieldDef[]): FormFieldDef[] {
-  return fields.filter((f) => f.type === 'file')
+  return fields.filter((f) => f.type === 'file' || f.type === 'livePhoto')
 }
 
 export function isFieldVisible(field: FormFieldDef, values: Record<string, string>): boolean {
@@ -186,13 +186,13 @@ export function validateFields(
   return fields.every((field) => {
     if (!isFieldVisible(field, values)) return true
     if (!field.required) return true
-    if (field.type === 'file') return (files[field.id]?.length ?? 0) > 0
+    if (field.type === 'file' || field.type === 'livePhoto') return (files[field.id]?.length ?? 0) > 0
     return !!values[field.id]?.trim()
   })
 }
 
 export const CONTACT_FIELDS: FormFieldDef[] = [
-  { id: 'phone', label: 'Phone Number', type: 'text', required: false, placeholder: '+234 801 234 5678', hint: 'Required if you choose SMS delivery' },
-  { id: 'email', label: 'Email Address', type: 'text', required: false, placeholder: 'you@email.com', hint: 'Required if you choose email delivery' },
+  { id: 'phone', label: 'Phone Number', type: 'text', required: false, placeholder: '+234 801 234 5678', hint: 'Enter phone, email, or both' },
+  { id: 'email', label: 'Email Address', type: 'text', required: false, placeholder: 'you@email.com', hint: 'Updates are sent to every contact you provide' },
   { id: 'referralCode', label: 'Referral Code', type: 'text', required: false, placeholder: 'Optional' },
 ]
