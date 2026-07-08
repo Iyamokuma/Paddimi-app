@@ -9,7 +9,7 @@ import {
   markRequestProcessing, approveRequest,
 } from '../../lib/api/requests'
 import { sendNotification, getAdminFileUrl } from '../../lib/api/notifications'
-import { getCustomerName, getNotifyChannel } from '../../lib/customer'
+import { getCustomerName, getNotifyChannels } from '../../lib/customer'
 import type { ServiceRequestRow } from '../../lib/database.types'
 import { formatNaira } from '../../data/services'
 import { AdminStatusBadge } from '../components/AdminStatusBadge'
@@ -62,10 +62,11 @@ export function AdminRequestDetailPage() {
       serviceName: req.service_name,
       phone: req.contact_phone ?? '',
     }
-    const channel = getNotifyChannel(req.form_data as Record<string, unknown>)
-    if (channel === 'email' && req.contact_email) {
+    const channels = getNotifyChannels(req.contact_phone ?? undefined, req.contact_email ?? undefined)
+    if (channels.includes('email') && req.contact_email) {
       await sendNotification(req.id, 'email', req.contact_email, 'document_approved', payload)
-    } else if (req.contact_phone) {
+    }
+    if (channels.includes('sms') && req.contact_phone) {
       await sendNotification(req.id, 'sms', req.contact_phone, 'document_approved', payload)
     }
   }
@@ -170,7 +171,7 @@ export function AdminRequestDetailPage() {
 
   const formData = (request.form_data ?? {}) as Record<string, string>
   const customerName = getCustomerName(formData)
-  const notifyChannel = getNotifyChannel(formData)
+  const notifyChannels = getNotifyChannels(request.contact_phone ?? undefined, request.contact_email ?? undefined)
   const isApproved = request.status === 'approved' || request.status === 'published'
   const hasDocument = Boolean(request.document_url)
 
@@ -289,7 +290,7 @@ export function AdminRequestDetailPage() {
                 </p>
               )}
               <p className="text-muted">
-                Code delivery: {notifyChannel === 'email' ? 'Email' : 'SMS'}
+                Notifications: {notifyChannels.length > 0 ? notifyChannels.map((c) => c.toUpperCase()).join(' + ') : '—'}
               </p>
               {request.referral_code && (
                 <p className="text-muted">Referral: {request.referral_code}</p>

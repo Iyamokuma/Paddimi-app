@@ -14,14 +14,14 @@ import { Card } from '../components/ui/Card'
 import { DownloadSection } from '../components/DownloadSection'
 import {
   affidavitServices, newspaperServices, formatNaira,
-  NEWSPAPER_TURNAROUND,
+  AFFIDAVIT_TURNAROUND, NEWSPAPER_TURNAROUND,
 } from '../data/services'
 
 const stats = [
   { value: '11', label: 'Affidavit Types' },
   { value: '5', label: 'Publication Types' },
+  { value: AFFIDAVIT_TURNAROUND, label: 'Affidavit Turnaround' },
   { value: NEWSPAPER_TURNAROUND, label: 'Publication Turnaround' },
-  { value: '100%', label: 'Digital Delivery' },
 ]
 
 const steps = [
@@ -45,16 +45,23 @@ export function HomePage() {
             <div>
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-brand-100 backdrop-blur-sm">
                 <Shield className="h-4 w-4 text-gold-400" />
-                Paddimi Multi Concepts — nationwide digital delivery
+                Paddimi Multi Concept
+              </div>
+
+              <div className="mb-5 inline-flex items-center gap-2 rounded-2xl border-2 border-gold-400/60 bg-gold-400/15 px-5 py-3 shadow-lg shadow-gold-400/10 backdrop-blur-sm">
+                <Clock className="h-6 w-6 text-gold-300" />
+                <span className="text-lg font-bold tracking-tight text-gold-200 sm:text-xl">
+                  Your affidavit in 15 minutes
+                </span>
               </div>
 
               <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-[3.25rem] text-balance">
-                Legal affidavits &amp; newspaper publications —{' '}
+                Genuine affidavits &amp; newspaper publications —{' '}
                 <span className="text-gold-400">entirely online</span>
               </h1>
 
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-brand-100/75">
-                Legal affidavits and newspaper publications — entirely online.
+                Genuine affidavits delivered fast across Rivers and Abia State.
                 No account, no office visits — submit, pay, and download with your redemption code.
               </p>
 
@@ -74,6 +81,10 @@ export function HomePage() {
               </div>
 
               <div className="mt-8 flex flex-wrap items-center gap-6 text-sm text-brand-200/60">
+                <span className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-gold-400" />
+                  Affidavits in {AFFIDAVIT_TURNAROUND}
+                </span>
                 <span className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-gold-400" />
                   Publications in {NEWSPAPER_TURNAROUND}
@@ -161,7 +172,7 @@ export function HomePage() {
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-500">Services</p>
               <h2 className="mt-2 text-3xl font-bold text-foreground sm:text-4xl">Affidavit Services</h2>
               <p className="mt-3 max-w-xl text-muted">
-                11 affidavit types. Each form captures the exact fields required by law.
+                11 genuine affidavit types — ready in {AFFIDAVIT_TURNAROUND}. Each form captures the exact fields required.
               </p>
             </div>
             <Link to="/affidavit">
@@ -175,14 +186,13 @@ export function HomePage() {
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {affidavitServices.map((service) => (
               <Card key={service.id} hover className="!p-5">
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-semibold leading-snug">{service.name}</h3>
-                  <span className="shrink-0 rounded-lg bg-brand-50 px-2 py-0.5 text-sm font-bold text-brand-600">
-                    {formatNaira(service.price)}
-                  </span>
-                </div>
+                <h3 className="font-semibold leading-snug">{service.name}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted line-clamp-2">
                   {service.description}
+                </p>
+                <p className="mt-3 text-xs font-medium text-green-600">
+                  <Clock className="mr-1 inline h-3 w-3" />
+                  {AFFIDAVIT_TURNAROUND}
                 </p>
               </Card>
             ))}
@@ -238,7 +248,7 @@ export function HomePage() {
           <h2 className="text-3xl font-bold text-white sm:text-4xl">Ready to get started?</h2>
           <div className="gold-line mx-auto mt-5 w-32 opacity-50" />
           <p className="mt-5 text-brand-100/70">
-            No account needed. Phone number required; email optional. Download documents electronically with your 4-character code.
+            No account needed. Enter phone, email, or both. Download documents electronically with your 4-character code.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link to="/affidavit">

@@ -12,18 +12,27 @@ export function getCustomerName(formData: Record<string, unknown> | null | undef
   return 'Customer'
 }
 
-export function getNotifyChannel(formData: Record<string, unknown> | null | undefined): NotifyChannel {
-  return formData?.notifyChannel === 'email' ? 'email' : 'sms'
+export function hasContactInfo(phone?: string, email?: string): boolean {
+  const phoneOk = Boolean(phone?.trim())
+  const trimmedEmail = email?.trim() ?? ''
+  const emailOk = trimmedEmail.length > 0 && /\S+@\S+\.\S+/.test(trimmedEmail)
+  return phoneOk || emailOk
 }
 
-export function contactChannelValid(
-  channel: NotifyChannel,
-  phone?: string,
-  email?: string,
-): boolean {
-  if (channel === 'email') {
-    const trimmed = email?.trim() ?? ''
-    return trimmed.length > 0 && /\S+@\S+\.\S+/.test(trimmed)
-  }
-  return Boolean(phone?.trim())
+export function getNotifyChannels(phone?: string, email?: string): NotifyChannel[] {
+  const channels: NotifyChannel[] = []
+  if (phone?.trim()) channels.push('sms')
+  const trimmedEmail = email?.trim() ?? ''
+  if (trimmedEmail && /\S+@\S+\.\S+/.test(trimmedEmail)) channels.push('email')
+  return channels
+}
+
+/** @deprecated use getNotifyChannels */
+export function getNotifyChannel(formData: Record<string, unknown> | null | undefined): NotifyChannel {
+  const channels = getNotifyChannels(
+    formData?.phone as string | undefined,
+    formData?.email as string | undefined,
+  )
+  if (channels.includes('email') && !channels.includes('sms')) return 'email'
+  return 'sms'
 }

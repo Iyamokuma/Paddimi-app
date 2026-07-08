@@ -2,6 +2,7 @@ import { Input } from '../ui/Input'
 import { Select } from '../ui/Select'
 import { Textarea } from '../ui/Textarea'
 import { SingleFileUpload } from '../ui/SingleFileUpload'
+import { LivePhotoCapture } from '../ui/LivePhotoCapture'
 import { nigerianStates } from '../../data/services'
 import type { FormFieldDef } from '../../types'
 import { isFieldVisible } from '../../data/affidavitFields'
@@ -23,6 +24,20 @@ export function DynamicFormFields({
     <div className="grid gap-5 sm:grid-cols-2">
       {visible.map((field) => {
         const colSpan = field.fullWidth ? 'sm:col-span-2' : ''
+
+        if (field.type === 'livePhoto') {
+          return (
+            <div key={field.id} className={colSpan}>
+              <LivePhotoCapture
+                label={field.label}
+                required={field.required}
+                files={files[field.id] ?? []}
+                onChange={(f) => onFileChange(field.id, f)}
+                hint={field.hint}
+              />
+            </div>
+          )
+        }
 
         if (field.type === 'file') {
           return (

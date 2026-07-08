@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import {
   UserPen, PenLine, Calendar, Heart, Flower2, Smartphone, Car, Cog,
   ArrowLeftRight, BadgeCheck, CalendarDays, Check, ArrowLeft, ArrowRight,
-  FileText, ShieldCheck,
+  FileText, ShieldCheck, MapPin,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Button } from '../components/ui/Button'
@@ -11,16 +11,15 @@ import { Card } from '../components/ui/Card'
 import { StepIndicator } from '../components/ui/StepIndicator'
 import { DynamicFormFields } from '../components/forms/DynamicFormFields'
 import {
-  affidavitServices, formatNaira,
+  affidavitServices, formatNaira, COVERED_STATES, AFFIDAVIT_TURNAROUND,
 } from '../data/services'
 import {
   getAffidavitFields, getTextFields, getFileFields, validateFields, CONTACT_FIELDS,
 } from '../data/affidavitFields'
 import { PaymentSuccess } from '../components/PaymentSuccess'
-import { NotifyChannelPicker } from '../components/NotifyChannelPicker'
 import { PageHeader } from '../components/layout/PageHeader'
 import { checkoutService } from '../lib/api/payments'
-import { contactChannelValid, type NotifyChannel } from '../lib/customer'
+import { getNotifyChannels, hasContactInfo } from '../lib/customer'
 
 const iconMap: Record<string, LucideIcon> = {
   UserPen, PenLine, Calendar, Heart, Flower2, Smartphone, Car, Cog,
@@ -28,18 +27,19 @@ const iconMap: Record<string, LucideIcon> = {
 }
 
 const steps = [
-  { id: 1, label: 'Select Type' },
-  { id: 2, label: 'Your Details' },
-  { id: 3, label: 'Documents' },
-  { id: 4, label: 'Review & Pay' },
+  { id: 1, label: 'Your State' },
+  { id: 2, label: 'Select Type' },
+  { id: 3, label: 'Your Details' },
+  { id: 4, label: 'Live Photo' },
+  { id: 5, label: 'Review & Pay' },
 ]
 
 export function AffidavitRequestPage() {
   const [step, setStep] = useState(1)
+  const [coveredState, setCoveredState] = useState('')
   const [selectedService, setSelectedService] = useState('')
   const [values, setValues] = useState<Record<string, string>>({})
   const [files, setFiles] = useState<Record<string, File[]>>({})
-  const [notifyChannel, setNotifyChannel] = useState<NotifyChannel>('sms')
   const [completed, setCompleted] = useState(false)
   const [redemptionCode, setRedemptionCode] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -50,9 +50,10 @@ export function AffidavitRequestPage() {
     () => (selectedService ? getAffidavitFields(selectedService) : []),
     [selectedService],
   )
-  const textFields = useMemo(() => [...getTextFields(allFields), ...CONTACT_FIELDS], [allFields])
+  const deponentFields = useMemo(() => getTextFields(allFields), [allFields])
   const fileFields = useMemo(() => getFileFields(allFields), [allFields])
   const total = service?.price ?? 0
+  const notifyChannels = getNotifyChannels(values.phone, values.email)
 
   const updateValue = (id: string, value: string) => {
     setValues((prev) => ({ ...prev, [id]: value }))
@@ -62,13 +63,28 @@ export function AffidavitRequestPage() {
     setFiles((prev) => ({ ...prev, [id]: f }))
   }
 
+  const selectState = (state: string) => {
+    setCoveredState(state)
+    setStep(2)
+  }
+
+  const selectService = (serviceId: string) => {
+    setSelectedService(serviceId)
+    setValues({})
+    setFiles({})
+    setStep(3)
+  }
+
   const canProceed = () => {
     switch (step) {
-      case 1: return !!selectedService
-      case 2: return validateFields(textFields, values, files)
-        && contactChannelValid(notifyChannel, values.phone, values.email)
-      case 3: return fileFields.length === 0 || validateFields(fileFields, values, files)
-      case 4: return contactChannelValid(notifyChannel, values.phone, values.email)
+      case 1: return !!coveredState
+      case 2: return !!selectedService
+      case 3:
+        return validateFields(deponentFields, values, files)
+          && validateFields(CONTACT_FIELDS, values, files)
+          && hasContactInfo(values.phone, values.email)
+      case 4: return fileFields.length === 0 || validateFields(fileFields, values, files)
+      case 5: return hasContactInfo(values.phone, values.email)
       default: return false
     }
   }
@@ -86,7 +102,7 @@ export function AffidavitRequestPage() {
         contactPhone: values.phone ?? '',
         contactEmail: values.email,
         referralCode: values.referralCode,
-        formData: { ...values, notifyChannel },
+        formData: { ...values, coveredState },
         paymentMethod: 'paystack',
         amountPaid: total,
         turnaroundMinutes: 15,
@@ -118,9 +134,10 @@ export function AffidavitRequestPage() {
         serviceName={service.name}
         contactPhone={values.phone ?? ''}
         contactEmail={values.email ?? ''}
-        notifyChannel={notifyChannel}
+        notifyChannels={notifyChannels}
         total={total}
         category="affidavit"
+        turnaround={AFFIDAVIT_TURNAROUND}
       />
     )
   }
@@ -129,7 +146,7 @@ export function AffidavitRequestPage() {
     <>
       <PageHeader
         title="Request an Affidavit"
-        description="Select your affidavit type, complete the required fields, and pay securely online."
+        description={`Genuine affidavits in ${AFFIDAVIT_TURNAROUND} — currently available in Rivers and Abia State.`}
         icon={<FileText className="h-7 w-7" />}
       />
       <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
@@ -143,7 +160,46 @@ export function AffidavitRequestPage() {
 
         {step === 1 && (
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold">Choose affidavit type</h2>
+            <h2 className="text-lg font-semibold">Select your state</h2>
+            <p className="text-sm text-muted">
+              Affidavit requests are currently available in these states. Select yours to continue.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {COVERED_STATES.map((state) => (
+                <Card
+                  key={state}
+                  hover
+                  selected={coveredState === state}
+                  onClick={() => selectState(state)}
+                  className="!p-5"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                      <MapPin className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">{state} State</h3>
+                      <p className="text-xs text-muted">Tap to continue</p>
+                    </div>
+                    {coveredState === state && <Check className="ml-auto h-5 w-5 text-brand-500" />}
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between gap-2">
+              <div>
+                <h2 className="text-lg font-semibold">Choose affidavit type</h2>
+                <p className="text-sm text-muted">{coveredState} State · tap a type to continue</p>
+              </div>
+              <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+                {AFFIDAVIT_TURNAROUND}
+              </span>
+            </div>
             <div className="grid gap-3 sm:grid-cols-2">
               {affidavitServices.map((svc) => {
                 const Icon = iconMap[svc.icon] || FileText
@@ -152,11 +208,7 @@ export function AffidavitRequestPage() {
                     key={svc.id}
                     hover
                     selected={selectedService === svc.id}
-                    onClick={() => {
-                      setSelectedService(svc.id)
-                      setValues({})
-                      setFiles({})
-                    }}
+                    onClick={() => selectService(svc.id)}
                     className="!p-4"
                   >
                     <div className="flex items-start gap-3">
@@ -171,9 +223,6 @@ export function AffidavitRequestPage() {
                           )}
                         </div>
                         <p className="mt-1 text-xs leading-relaxed text-muted line-clamp-2">{svc.description}</p>
-                        <div className="mt-2 text-xs font-semibold text-brand-600">
-                          {formatNaira(svc.price)}
-                        </div>
                       </div>
                     </div>
                   </Card>
@@ -183,26 +232,19 @@ export function AffidavitRequestPage() {
           </div>
         )}
 
-        {step === 2 && (
+        {step === 3 && (
           <div className="space-y-8">
             <div>
-              <h2 className="text-lg font-semibold">Deponent information</h2>
+              <h2 className="text-lg font-semibold">Your details</h2>
               <p className="mt-1 text-sm text-muted">Complete all fields for {service?.name}.</p>
-              <div className="mt-6">
+              <div className="mt-6 space-y-6">
                 <DynamicFormFields
-                  fields={getTextFields(allFields)}
+                  fields={deponentFields}
                   values={values}
                   files={files}
                   onChange={updateValue}
                   onFileChange={updateFiles}
                 />
-              </div>
-            </div>
-            <div>
-              <h2 className="text-lg font-semibold">Contact information</h2>
-              <p className="mt-1 text-sm text-muted">Choose how to receive your code, then provide the matching contact details.</p>
-              <div className="mt-6 space-y-6">
-                <NotifyChannelPicker value={notifyChannel} onChange={setNotifyChannel} />
                 <DynamicFormFields
                   fields={CONTACT_FIELDS}
                   values={values}
@@ -215,14 +257,14 @@ export function AffidavitRequestPage() {
           </div>
         )}
 
-        {step === 3 && (
+        {step === 4 && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-lg font-semibold">Upload documents &amp; photos</h2>
+              <h2 className="text-lg font-semibold">Live passport photo</h2>
               <p className="mt-1 text-sm text-muted">
                 {fileFields.length > 0
-                  ? 'Upload the required files for your affidavit.'
-                  : 'No additional uploads required for this affidavit type.'}
+                  ? 'Use your camera to take an instant photo — uploads are not accepted.'
+                  : 'No photo required for this affidavit type.'}
               </p>
             </div>
             {fileFields.length > 0 ? (
@@ -235,18 +277,22 @@ export function AffidavitRequestPage() {
               />
             ) : (
               <div className="rounded-xl bg-brand-50 p-5 text-sm text-brand-700">
-                You can proceed to review — no file uploads needed for this affidavit.
+                You can proceed to review — no photo needed for this affidavit.
               </div>
             )}
           </div>
         )}
 
-        {step === 4 && service && (
+        {step === 5 && service && (
           <div className="space-y-8">
             <div>
               <h2 className="text-lg font-semibold">Review your order</h2>
               <Card className="mt-4 !p-5">
                 <div className="space-y-3 text-sm">
+                  <div className="flex justify-between gap-4">
+                    <span className="text-muted">State</span>
+                    <span className="font-medium">{coveredState} State</span>
+                  </div>
                   <div className="flex justify-between gap-4">
                     <span className="text-muted">Service</span>
                     <span className="font-medium text-right">{service.name}</span>
@@ -258,9 +304,21 @@ export function AffidavitRequestPage() {
                     </div>
                   )}
                   <div className="flex justify-between">
+                    <span className="text-muted">Turnaround</span>
+                    <span className="font-medium text-green-600">{AFFIDAVIT_TURNAROUND}</span>
+                  </div>
+                  <div className="flex justify-between">
                     <span className="text-muted">Delivery</span>
                     <span className="font-medium">Electronic download</span>
                   </div>
+                  {(values.phone || values.email) && (
+                    <div className="flex justify-between gap-4">
+                      <span className="text-muted">Notifications</span>
+                      <span className="font-medium text-right">
+                        {[values.phone && 'SMS', values.email && 'Email'].filter(Boolean).join(' + ')}
+                      </span>
+                    </div>
+                  )}
                   <div className="border-t border-border pt-3 flex justify-between text-base">
                     <span className="font-semibold">Total</span>
                     <span className="font-bold text-brand-600">{formatNaira(total)}</span>
@@ -269,17 +327,19 @@ export function AffidavitRequestPage() {
               </Card>
             </div>
 
-            <NotifyChannelPicker value={notifyChannel} onChange={setNotifyChannel} />
-
             <div className="rounded-xl border border-brand-100 bg-brand-50 p-4 text-sm text-brand-700">
               <div className="flex items-start gap-2">
                 <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
                 <div>
                   <p className="font-medium">Secure payment via Paystack</p>
                   <p className="mt-1 text-brand-600">
-                    Pay with debit/credit card, bank transfer, or USSD. After payment is confirmed,
-                    your code will be sent via {notifyChannel === 'sms' ? 'SMS' : 'email'} to{' '}
-                    <strong>{notifyChannel === 'sms' ? values.phone : values.email}</strong>.
+                    Pay with debit/credit card, bank transfer, or USSD. Your code will be sent to{' '}
+                    {notifyChannels.length === 2
+                      ? 'your phone and email'
+                      : notifyChannels.includes('sms')
+                        ? `your phone (${values.phone})`
+                        : `your email (${values.email})`}
+                    {' '}immediately after payment.
                   </p>
                 </div>
               </div>
@@ -288,13 +348,21 @@ export function AffidavitRequestPage() {
         )}
 
         <div className="mt-10 flex items-center justify-between border-t border-border pt-6">
-          <Button variant="ghost" onClick={() => setStep((s) => s - 1)} disabled={step === 1}>
+          <Button
+            variant="ghost"
+            onClick={() => setStep((s) => s - 1)}
+            disabled={step === 1}
+          >
             <ArrowLeft className="h-4 w-4" /> Previous
           </Button>
-          {step < 4 ? (
-            <Button onClick={() => setStep((s) => s + 1)} disabled={!canProceed()}>
-              Continue <ArrowRight className="h-4 w-4" />
-            </Button>
+          {step < 5 ? (
+            step === 1 || step === 2 ? (
+              <p className="text-xs text-muted">Select an option above to continue</p>
+            ) : (
+              <Button onClick={() => setStep((s) => s + 1)} disabled={!canProceed()}>
+                Continue <ArrowRight className="h-4 w-4" />
+              </Button>
+            )
           ) : (
             <Button variant="gold" onClick={handlePayment} disabled={!canProceed() || submitting}>
               {submitting ? 'Processing…' : `Pay ${formatNaira(total)}`}

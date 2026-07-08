@@ -5,8 +5,12 @@ export const NOTIFICATION_EMAILS = [
   'paddimi.mc@yahoo.com',
 ] as const
 
+export const AFFIDAVIT_TURNAROUND = '15 minutes'
 export const NEWSPAPER_TURNAROUND = '24 hours'
 export const CODE_VALIDITY = '1 year'
+
+/** States currently served for affidavit requests */
+export const COVERED_STATES = ['Rivers', 'Abia'] as const
 
 export const affidavitServices: ServiceItem[] = [
   {

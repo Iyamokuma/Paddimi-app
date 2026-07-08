@@ -8,7 +8,7 @@ export type RequestStatus =
   | 'published'
   | 'cancelled'
 
-export type FieldType = 'text' | 'date' | 'select' | 'textarea' | 'file'
+export type FieldType = 'text' | 'date' | 'select' | 'textarea' | 'file' | 'livePhoto'
 
 export interface FieldOption {
   value: string
