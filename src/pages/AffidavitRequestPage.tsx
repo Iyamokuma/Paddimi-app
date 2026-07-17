@@ -3,11 +3,12 @@ import { Link } from 'react-router-dom'
 import {
   UserPen, PenLine, Calendar, Heart, Flower2, Smartphone, Car, Cog,
   ArrowLeftRight, BadgeCheck, CalendarDays, Check, ArrowLeft, ArrowRight,
-  FileText, ShieldCheck, MapPin,
+  FileText, ShieldCheck,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
+import { Select } from '../components/ui/Select'
 import { StepIndicator } from '../components/ui/StepIndicator'
 import { DynamicFormFields } from '../components/forms/DynamicFormFields'
 import {
@@ -30,7 +31,7 @@ const steps = [
   { id: 1, label: 'Your State' },
   { id: 2, label: 'Select Type' },
   { id: 3, label: 'Your Details' },
-  { id: 4, label: 'Live Photo' },
+  { id: 4, label: 'Photo' },
   { id: 5, label: 'Review & Pay' },
 ]
 
@@ -65,7 +66,6 @@ export function AffidavitRequestPage() {
 
   const selectState = (state: string) => {
     setCoveredState(state)
-    setStep(2)
   }
 
   const selectService = (serviceId: string) => {
@@ -159,33 +159,25 @@ export function AffidavitRequestPage() {
         </div>
 
         {step === 1 && (
-          <div className="space-y-4">
+          <div className="mx-auto max-w-md space-y-4">
             <h2 className="text-lg font-semibold">Select your state</h2>
             <p className="text-sm text-muted">
-              Affidavit requests are currently available in these states. Select yours to continue.
+              Choose the state where you need this affidavit. More states are added over time.
             </p>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {COVERED_STATES.map((state) => (
-                <Card
-                  key={state}
-                  hover
-                  selected={coveredState === state}
-                  onClick={() => selectState(state)}
-                  className="!p-5"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
-                      <MapPin className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold">{state} State</h3>
-                      <p className="text-xs text-muted">Tap to continue</p>
-                    </div>
-                    {coveredState === state && <Check className="ml-auto h-5 w-5 text-brand-500" />}
-                  </div>
-                </Card>
-              ))}
-            </div>
+            <Select
+              label="State"
+              required
+              placeholder="Select your state"
+              value={coveredState}
+              onChange={(e) => selectState(e.target.value)}
+              options={COVERED_STATES.map((state) => ({
+                value: state,
+                label: `${state} State`,
+              }))}
+            />
+            <p className="text-xs text-muted">
+              Currently serving: {COVERED_STATES.map((s) => `${s} State`).join(', ')}
+            </p>
           </div>
         )}
 
@@ -260,10 +252,10 @@ export function AffidavitRequestPage() {
         {step === 4 && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-lg font-semibold">Live passport photo</h2>
+              <h2 className="text-lg font-semibold">Passport photo</h2>
               <p className="mt-1 text-sm text-muted">
                 {fileFields.length > 0
-                  ? 'Use your camera to take an instant photo — uploads are not accepted.'
+                  ? 'Upload a photo from your device or take one instantly with your camera.'
                   : 'No photo required for this affidavit type.'}
               </p>
             </div>
@@ -356,8 +348,8 @@ export function AffidavitRequestPage() {
             <ArrowLeft className="h-4 w-4" /> Previous
           </Button>
           {step < 5 ? (
-            step === 1 || step === 2 ? (
-              <p className="text-xs text-muted">Select an option above to continue</p>
+            step === 2 ? (
+              <p className="text-xs text-muted">Tap an affidavit type above to continue</p>
             ) : (
               <Button onClick={() => setStep((s) => s + 1)} disabled={!canProceed()}>
                 Continue <ArrowRight className="h-4 w-4" />

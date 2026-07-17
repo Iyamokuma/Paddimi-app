@@ -2,7 +2,7 @@ import { Input } from '../ui/Input'
 import { Select } from '../ui/Select'
 import { Textarea } from '../ui/Textarea'
 import { SingleFileUpload } from '../ui/SingleFileUpload'
-import { LivePhotoCapture } from '../ui/LivePhotoCapture'
+import { PhotoInput } from '../ui/PhotoInput'
 import { nigerianStates } from '../../data/services'
 import type { FormFieldDef } from '../../types'
 import { isFieldVisible } from '../../data/affidavitFields'
@@ -28,12 +28,13 @@ export function DynamicFormFields({
         if (field.type === 'livePhoto') {
           return (
             <div key={field.id} className={colSpan}>
-              <LivePhotoCapture
+              <PhotoInput
                 label={field.label}
                 required={field.required}
+                accept={field.accept ?? '.jpg,.jpeg,.png'}
                 files={files[field.id] ?? []}
                 onChange={(f) => onFileChange(field.id, f)}
-                hint={field.hint}
+                hint={field.hint ?? 'Upload a photo from your device or take one with your camera.'}
               />
             </div>
           )
