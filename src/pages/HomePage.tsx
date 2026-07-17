@@ -43,15 +43,14 @@ export function HomePage() {
         <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-28">
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
             <div>
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-brand-100 backdrop-blur-sm">
-                <Shield className="h-4 w-4 text-gold-400" />
-                Paddimi Multi Concept
-              </div>
-
-              <div className="mb-5 inline-flex items-center gap-2 rounded-2xl border-2 border-gold-400/60 bg-gold-400/15 px-5 py-3 shadow-lg shadow-gold-400/10 backdrop-blur-sm">
-                <Clock className="h-6 w-6 text-gold-300" />
-                <span className="text-lg font-bold tracking-tight text-gold-200 sm:text-xl">
-                  Your affidavit in 15 minutes
+              <div className="mb-6 flex flex-col gap-2 sm:inline-flex sm:flex-row sm:items-stretch sm:overflow-hidden sm:rounded-full sm:border sm:border-white/15 sm:bg-white/5 sm:backdrop-blur-md">
+                <span className="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-brand-100 backdrop-blur-sm sm:rounded-none sm:border-0 sm:bg-transparent sm:px-5">
+                  <Shield className="h-4 w-4 shrink-0 text-gold-400" />
+                  Paddimi Multi Concept
+                </span>
+                <span className="inline-flex items-center justify-center gap-2 rounded-full border border-gold-400/25 bg-gold-400/10 px-4 py-2 text-sm font-semibold text-gold-100 backdrop-blur-sm sm:rounded-none sm:border-0 sm:border-l sm:border-white/10 sm:bg-gold-400/15 sm:px-5">
+                  <Clock className="h-4 w-4 shrink-0 text-gold-400" />
+                  Affidavit in 15 minutes
                 </span>
               </div>
 
@@ -61,8 +60,7 @@ export function HomePage() {
               </h1>
 
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-brand-100/75">
-                Genuine affidavits delivered fast across Rivers and Abia State.
-                No account, no office visits — submit, pay, and download with your redemption code.
+                Genuine affidavits delivered fast. No account, no office visits — submit, pay, and download with your redemption code.
               </p>
 
               <div className="mt-10 flex flex-wrap gap-4">
