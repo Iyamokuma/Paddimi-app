@@ -6,11 +6,12 @@ import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 import { Logo } from '../../components/Logo'
 import { isSupabaseConfigured } from '../../lib/supabase'
+import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../../config/adminAuth'
 
 export function AdminLoginPage() {
   const { signIn, user, isAdmin, loading } = useAuth()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState(DEFAULT_ADMIN_EMAIL)
+  const [password, setPassword] = useState(DEFAULT_ADMIN_PASSWORD)
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
@@ -93,6 +94,20 @@ export function AdminLoginPage() {
               {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Sign in'}
             </Button>
           </form>
+
+          <div className="mt-5 rounded-xl border border-brand-100 bg-brand-50/60 p-4 text-xs text-muted">
+            <p className="font-medium text-foreground">Default admin login</p>
+            <p className="mt-1">
+              Email: <span className="font-mono text-foreground">{DEFAULT_ADMIN_EMAIL}</span>
+            </p>
+            <p>
+              Password: <span className="font-mono text-foreground">{DEFAULT_ADMIN_PASSWORD}</span>
+            </p>
+            <p className="mt-2 text-[11px]">
+              Create this user once in Supabase → Authentication → Users (Auto Confirm User). See{' '}
+              <code className="rounded bg-white px-1">SUPABASE_SETUP.md</code>.
+            </p>
+          </div>
         </div>
       </div>
     </div>

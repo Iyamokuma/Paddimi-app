@@ -94,6 +94,7 @@ npx supabase functions deploy get-admin-file-url
 npx supabase functions deploy send-notification
 npx supabase functions deploy paystack-initialize
 npx supabase functions deploy paystack-verify
+npx supabase functions deploy bootstrap-admin
 ```
 
 Set secrets in **Dashboard → Edge Functions → Secrets**:
@@ -114,8 +115,30 @@ Without Resend/Termii, notifications are logged as `pending`.
 
 ## Step 4 — Create admin account
 
-1. **Authentication → Users → Add user**
-2. Profile auto-created with role `admin`
+The app uses these **default admin credentials** (pre-filled on `/admin/login`):
+
+| Field | Value |
+|-------|-------|
+| Email | `admin@paddimi.com` |
+| Password | `Paddimi@2026!` |
+
+**One-time setup in Supabase:**
+
+1. **Authentication → Users → Add user → Create new user**
+2. Email: `admin@paddimi.com`
+3. Password: `Paddimi@2026!`
+4. Turn on **Auto Confirm User**
+5. Save — a `profiles` row is auto-created with role `admin`
+
+If login says “Invalid login credentials”, the user does not exist yet or the password does not match.
+
+**Automatic first-time setup:** deploy the `bootstrap-admin` edge function (Step 3). On first sign-in with the default credentials, the app creates/resets the admin user in Supabase automatically.
+
+```bash
+npx supabase functions deploy bootstrap-admin --project-ref zswaewctxihcqyyreivc
+```
+
+**Production:** Change the password in Supabase after first login, then update `src/config/adminAuth.ts` or remove the on-screen defaults.
 
 ---
 

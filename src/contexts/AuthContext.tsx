@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
+import { bootstrapDefaultAdmin } from '../lib/api/adminAuth'
 import { getSupabase, isSupabaseConfigured } from '../lib/supabase'
 import type { ProfileRow } from '../lib/database.types'
 
@@ -86,9 +87,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const sb = getSupabase()!
-    const { data, error } = await sb.auth.signInWithPassword({ email, password })
+    let { data, error } = await sb.auth.signInWithPassword({ email, password })
 
-    if (error) return { error: error.message }
+    if (error?.message.toLowerCase().includes('invalid login credentials')) {
+      const bootstrapped = await bootstrapDefaultAdmin(email, password)
+      if (bootstrapped) {
+        const retry = await sb.auth.signInWithPassword({ email, password })
+        data = retry.data
+        error = retry.error
+      }
+    }
+
+    if (error) {
+      if (error.message.toLowerCase().includes('invalid login credentials')) {
+        return {
+          error:
+            'Invalid login credentials. If this is your first login, deploy the bootstrap-admin edge function in Supabase (see SUPABASE_SETUP.md).',
+        }
+      }
+      return { error: error.message }
+    }
 
     if (data.user) {
       await loadProfile(data.user)
