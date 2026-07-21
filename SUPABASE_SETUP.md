@@ -9,7 +9,7 @@ Copy `.env.example` to `.env` and fill in:
 ```env
 VITE_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
 VITE_SUPABASE_ANON_KEY=your_anon_public_key_here
-VITE_PAYSTACK_PUBLIC_KEY=pk_test_xxxxxxxx
+VITE_FLUTTERWAVE_PUBLIC_KEY=FLWPUBK_TEST-xxxxxxxx
 ```
 
 **Where to find Supabase keys:** Dashboard → **Project Settings** → **API**
@@ -18,24 +18,24 @@ VITE_PAYSTACK_PUBLIC_KEY=pk_test_xxxxxxxx
 
 ---
 
-## Paystack — keys only
+## Flutterwave — keys only
 
 Once Supabase is connected, payments work by adding keys in two places:
 
 **Frontend (`.env` or Vercel env vars):**
 ```env
-VITE_PAYSTACK_PUBLIC_KEY=pk_test_xxxxxxxx
+VITE_FLUTTERWAVE_PUBLIC_KEY=FLWPUBK_TEST-xxxxxxxx
 ```
 
 **Supabase Edge Function secrets** (Dashboard → Edge Functions → Secrets):
 ```env
-PAYSTACK_SECRET_KEY=sk_test_xxxxxxxx
-PAYSTACK_PUBLIC_KEY=pk_test_xxxxxxxx
+FLUTTERWAVE_SECRET_KEY=FLWSECK_TEST-xxxxxxxx
+FLUTTERWAVE_PUBLIC_KEY=FLWPUBK_TEST-xxxxxxxx
 ```
 
-Deploy `paystack-initialize` and `paystack-verify`. No other payment code changes needed — Paystack handles card, bank transfer, and USSD in one popup.
+Deploy `flutterwave-initialize` and `flutterwave-verify`. Flutterwave handles card, bank transfer, and USSD in one checkout popup.
 
-For local testing without Paystack, set `PAYMENT_DEV_MODE=true` in edge secrets (never in production).
+For local testing without Flutterwave, set `PAYMENT_DEV_MODE=true` in edge secrets (never in production).
 
 ---
 
@@ -92,8 +92,8 @@ Policies are in `supabase/migrations/002_storage_buckets.sql`.
 npx supabase functions deploy get-download-url
 npx supabase functions deploy get-admin-file-url
 npx supabase functions deploy send-notification
-npx supabase functions deploy paystack-initialize
-npx supabase functions deploy paystack-verify
+npx supabase functions deploy flutterwave-initialize
+npx supabase functions deploy flutterwave-verify
 npx supabase functions deploy bootstrap-admin
 ```
 
@@ -101,14 +101,14 @@ Set secrets in **Dashboard → Edge Functions → Secrets**:
 
 | Secret | Purpose |
 |--------|---------|
-| `PAYSTACK_SECRET_KEY` | Verify payments server-side |
-| `PAYSTACK_PUBLIC_KEY` | Returned to client if needed |
+| `FLUTTERWAVE_SECRET_KEY` | Verify payments server-side |
+| `FLUTTERWAVE_PUBLIC_KEY` | Returned to client if needed |
 | `RESEND_API_KEY` | Send emails (Resend.com) |
 | `RESEND_FROM_EMAIL` | e.g. `Paddimi <notify@yourdomain.com>` |
 | `TERMII_API_KEY` | SMS via Termii |
 | `TERMII_SENDER_ID` | SMS sender name |
 
-Without Paystack secrets, payments fail unless `PAYMENT_DEV_MODE=true` is set (dev only).
+Without Flutterwave secrets, payments fail unless `PAYMENT_DEV_MODE=true` is set (dev only).
 Without Resend/Termii, notifications are logged as `pending`.
 
 ---
@@ -168,7 +168,7 @@ npm run dev
 ## How data flows
 
 ```
-Customer pays (Paystack) → pending order created → payment verified
+Customer pays (Flutterwave) → pending order created → payment verified
                         → request submitted + admin notified
                         → 4-char code shown to customer
 
