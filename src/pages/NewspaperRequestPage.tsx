@@ -87,7 +87,7 @@ export function NewspaperRequestPage() {
         contactEmail: values.email,
         referralCode: values.referralCode,
         formData: values,
-        paymentMethod: 'paystack',
+        paymentMethod: 'flutterwave',
         amountPaid: total,
         files,
       }, fileLabels)
@@ -277,7 +277,7 @@ export function NewspaperRequestPage() {
               <div className="flex items-start gap-2">
                 <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
                 <div>
-                  <p className="font-medium">Secure payment via Paystack</p>
+                  <p className="font-medium">Secure payment via Flutterwave</p>
                   <p className="mt-1 text-brand-600">
                     Pay with debit/credit card, bank transfer, or USSD. After payment is confirmed,
                     your code will be sent to{' '}

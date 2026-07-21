@@ -103,7 +103,7 @@ export function AffidavitRequestPage() {
         contactEmail: values.email,
         referralCode: values.referralCode,
         formData: { ...values, coveredState },
-        paymentMethod: 'paystack',
+        paymentMethod: 'flutterwave',
         amountPaid: total,
         turnaroundMinutes: 15,
         files,
@@ -323,9 +323,9 @@ export function AffidavitRequestPage() {
               <div className="flex items-start gap-2">
                 <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
                 <div>
-                  <p className="font-medium">Secure payment via Paystack</p>
+                  <p className="font-medium">Secure payment via Flutterwave</p>
                   <p className="mt-1 text-brand-600">
-                    Pay with debit/credit card, bank transfer, or USSD. Your code will be sent to{' '}
+                    Pay with debit/credit card, bank transfer, or USSD. Your redemption code will be sent to{' '}
                     {notifyChannels.length === 2
                       ? 'your phone and email'
                       : notifyChannels.includes('sms')
