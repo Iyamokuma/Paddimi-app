@@ -10,6 +10,7 @@ Copy `.env.example` to `.env` and fill in:
 VITE_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
 VITE_SUPABASE_ANON_KEY=your_anon_public_key_here
 VITE_FLUTTERWAVE_PUBLIC_KEY=FLWPUBK_TEST-xxxxxxxx
+VITE_PAYSTACK_PUBLIC_KEY=pk_test_xxxxxxxx
 ```
 
 **Where to find Supabase keys:** Dashboard → **Project Settings** → **API**
@@ -35,7 +36,26 @@ FLUTTERWAVE_PUBLIC_KEY=FLWPUBK_TEST-xxxxxxxx
 
 Deploy `flutterwave-initialize` and `flutterwave-verify`. Flutterwave handles card, bank transfer, and USSD in one checkout popup.
 
-For local testing without Flutterwave, set `PAYMENT_DEV_MODE=true` in edge secrets (never in production).
+For local testing without a payment gateway, set `PAYMENT_DEV_MODE=true` in edge secrets (never in production).
+
+---
+
+## Paystack — keys (optional second gateway)
+
+Customers can choose **Flutterwave or Paystack** at checkout when both are configured.
+
+**Frontend (`.env` or Vercel env vars):**
+```env
+VITE_PAYSTACK_PUBLIC_KEY=pk_test_xxxxxxxx
+```
+
+**Supabase Edge Function secrets:**
+```env
+PAYSTACK_SECRET_KEY=sk_test_xxxxxxxx
+PAYSTACK_PUBLIC_KEY=pk_test_xxxxxxxx
+```
+
+Deploy `paystack-initialize` and `paystack-verify`.
 
 ---
 
@@ -94,6 +114,8 @@ npx supabase functions deploy get-admin-file-url
 npx supabase functions deploy send-notification
 npx supabase functions deploy flutterwave-initialize
 npx supabase functions deploy flutterwave-verify
+npx supabase functions deploy paystack-initialize
+npx supabase functions deploy paystack-verify
 npx supabase functions deploy bootstrap-admin
 ```
 
@@ -101,14 +123,16 @@ Set secrets in **Dashboard → Edge Functions → Secrets**:
 
 | Secret | Purpose |
 |--------|---------|
-| `FLUTTERWAVE_SECRET_KEY` | Verify payments server-side |
-| `FLUTTERWAVE_PUBLIC_KEY` | Returned to client if needed |
+| `FLUTTERWAVE_SECRET_KEY` | Verify Flutterwave payments |
+| `FLUTTERWAVE_PUBLIC_KEY` | Flutterwave public key fallback |
+| `PAYSTACK_SECRET_KEY` | Verify Paystack payments |
+| `PAYSTACK_PUBLIC_KEY` | Paystack public key fallback |
 | `RESEND_API_KEY` | Send emails (Resend.com) |
 | `RESEND_FROM_EMAIL` | e.g. `Paddimi <notify@yourdomain.com>` |
 | `TERMII_API_KEY` | SMS via Termii |
 | `TERMII_SENDER_ID` | SMS sender name |
 
-Without Flutterwave secrets, payments fail unless `PAYMENT_DEV_MODE=true` is set (dev only).
+Without payment gateway secrets, checkout fails unless `PAYMENT_DEV_MODE=true` is set (dev only).
 Without Resend/Termii, notifications are logged as `pending`.
 
 ---

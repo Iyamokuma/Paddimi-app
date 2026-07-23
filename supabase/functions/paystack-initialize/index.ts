@@ -55,7 +55,7 @@ Deno.serve(async (req) => {
         contact_email: contactEmail || null,
         referral_code: referralCode || null,
         form_data: formData ?? {},
-        payment_method: paymentMethod ?? 'card',
+        payment_method: paymentMethod ?? 'flutterwave',
         amount_paid: price,
         expires_at: addYears(now, 1).toISOString(),
         estimated_ready_at: estimatedReady.toISOString(),
