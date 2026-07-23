@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Newspaper, AlertCircle, Megaphone, PenLine, PartyPopper,
@@ -19,6 +19,8 @@ import { validateFields } from '../data/affidavitFields'
 import { PaymentSuccess } from '../components/PaymentSuccess'
 import { PageHeader } from '../components/layout/PageHeader'
 import { checkoutService } from '../lib/api/payments'
+import { getDefaultPaymentProvider, getAvailablePaymentProviders, type PaymentProvider } from '../lib/paymentProviders'
+import { PaymentProviderPicker } from '../components/PaymentProviderPicker'
 import { getNotifyChannels, hasContactInfo } from '../lib/customer'
 
 const iconMap: Record<string, LucideIcon> = {
@@ -41,6 +43,12 @@ export function NewspaperRequestPage() {
   const [redemptionCode, setRedemptionCode] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
+  const paymentOptions = useMemo(() => getAvailablePaymentProviders(), [])
+  const [paymentProvider, setPaymentProvider] = useState<PaymentProvider | null>(null)
+
+  useEffect(() => {
+    setPaymentProvider(getDefaultPaymentProvider())
+  }, [paymentOptions.length])
 
   const service = newspaperServices.find((s) => s.id === selectedService)
   const textFields = useMemo(
@@ -74,7 +82,7 @@ export function NewspaperRequestPage() {
   }
 
   const handlePayment = async () => {
-    if (!service) return
+    if (!service || !paymentProvider) return
     setSubmitting(true)
     setSubmitError('')
     try {
@@ -87,10 +95,10 @@ export function NewspaperRequestPage() {
         contactEmail: values.email,
         referralCode: values.referralCode,
         formData: values,
-        paymentMethod: 'flutterwave',
+        paymentMethod: paymentProvider,
         amountPaid: total,
         files,
-      }, fileLabels)
+      }, fileLabels, paymentProvider)
       setRedemptionCode(code)
       setCompleted(true)
     } catch (e) {
@@ -273,11 +281,17 @@ export function NewspaperRequestPage() {
               </Card>
             </div>
 
+            <PaymentProviderPicker
+              options={paymentOptions}
+              value={paymentProvider}
+              onChange={setPaymentProvider}
+            />
+
             <div className="rounded-xl border border-brand-100 bg-brand-50 p-4 text-sm text-brand-700">
               <div className="flex items-start gap-2">
                 <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
                 <div>
-                  <p className="font-medium">Secure payment via Flutterwave</p>
+                  <p className="font-medium">Secure payment at checkout</p>
                   <p className="mt-1 text-brand-600">
                     Pay with debit/credit card, bank transfer, or USSD. After payment is confirmed,
                     your code will be sent to{' '}
@@ -303,7 +317,7 @@ export function NewspaperRequestPage() {
               Continue <ArrowRight className="h-4 w-4" />
             </Button>
           ) : (
-            <Button variant="gold" onClick={handlePayment} disabled={!canProceed() || submitting}>
+            <Button variant="gold" onClick={handlePayment} disabled={!canProceed() || submitting || !paymentProvider}>
               {submitting ? 'Processing…' : `Pay ${formatNaira(total)}`}
             </Button>
           )}

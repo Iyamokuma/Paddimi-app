@@ -1,19 +1,10 @@
 import { corsHeaders, jsonResponse } from '../_shared/cors.ts'
 import { getAdminClient } from '../_shared/supabase-admin.ts'
-
-function getCustomerNameFromForm(formData: Record<string, unknown> | null): string {
-  if (!formData) return 'Customer'
-  if (formData.fullName && String(formData.fullName).trim()) return String(formData.fullName).trim()
-  const parts = [formData.firstName, formData.middleName, formData.lastName]
-    .filter((p) => p && String(p).trim())
-    .map(String)
-  return parts.length > 0 ? parts.join(' ') : 'Customer'
-}
+import { notifyNewOrder } from '../_shared/notify-new-order.ts'
 
 async function verifyWithPaystack(reference: string): Promise<{ ok: boolean; amount?: number }> {
   const secret = Deno.env.get('PAYSTACK_SECRET_KEY')
   if (!secret) {
-    // Fail closed unless dev mode is explicitly enabled
     return { ok: Deno.env.get('PAYMENT_DEV_MODE') === 'true' }
   }
 
@@ -23,52 +14,6 @@ async function verifyWithPaystack(reference: string): Promise<{ ok: boolean; amo
   const data = await res.json()
   if (!data.status || data.data.status !== 'success') return { ok: false }
   return { ok: true, amount: data.data.amount / 100 }
-}
-
-async function notifyNewOrder(
-  request: {
-    id: string
-    redemption_code: string
-    service_name: string
-    contact_phone: string
-    contact_email: string | null
-    form_data: Record<string, unknown> | null
-  },
-  supabaseUrl: string,
-  serviceKey: string,
-) {
-  const notify = async (channel: 'email' | 'sms', recipient: string, notificationType: string) => {
-    await fetch(`${supabaseUrl}/functions/v1/send-notification`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${serviceKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        requestId: request.id,
-        channel,
-        recipient,
-        notificationType,
-        payload: {
-          code: request.redemption_code,
-          serviceName: request.service_name,
-          phone: request.contact_phone ?? '',
-          customerName: getCustomerNameFromForm(request.form_data),
-        },
-      }),
-    })
-  }
-
-  // Admin alert (fans out to both admin inboxes)
-  await notify('email', 'paddimi.mc@gmail.com', 'new_order')
-
-  // Customer confirmation — send to every channel provided
-  if (request.contact_email) {
-    await notify('email', request.contact_email, 'order_confirmed')
-  }
-  if (request.contact_phone) {
-    await notify('sms', request.contact_phone, 'order_confirmed')
-  }
 }
 
 Deno.serve(async (req) => {
