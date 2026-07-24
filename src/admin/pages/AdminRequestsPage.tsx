@@ -45,8 +45,7 @@ export function AdminRequestsPage() {
             value={status}
             onChange={(e) => setStatus(e.target.value)}
             options={[
-              { value: 'all', label: 'All statuses' },
-              { value: 'pending_payment', label: 'Awaiting Payment' },
+              { value: 'all', label: 'All paid requests' },
               { value: 'submitted', label: 'Submitted' },
               { value: 'processing', label: 'Processing' },
               { value: 'approved', label: 'Approved' },

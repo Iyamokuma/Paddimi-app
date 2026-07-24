@@ -29,27 +29,35 @@ export async function notifyNewOrder(
   }
 
   const notify = async (channel: 'email' | 'sms', recipient: string, notificationType: string) => {
-    await fetch(`${supabaseUrl}/functions/v1/send-notification`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${serviceKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        requestId: request.id,
-        channel,
-        recipient,
-        notificationType,
-        payload,
-      }),
-    })
+    try {
+      const res = await fetch(`${supabaseUrl}/functions/v1/send-notification`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${serviceKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          requestId: request.id,
+          channel,
+          recipient,
+          notificationType,
+          payload,
+        }),
+      })
+      if (!res.ok) {
+        console.error(`notify ${notificationType} via ${channel} failed:`, await res.text())
+      }
+    } catch (err) {
+      console.error(`notify ${notificationType} via ${channel} error:`, err)
+    }
+  }
+
+  // Customer code email first (most important), then admin alert
+  if (request.contact_email) {
+    await notify('email', request.contact_email, 'order_confirmed')
   }
 
   await notify('email', 'paddimi.mc@gmail.com', 'new_order')
-
-  if (!request.contact_email) return
-
-  await notify('email', request.contact_email, 'order_confirmed')
 
   if (request.contact_phone) {
     await notify('sms', request.contact_phone, 'order_confirmed')

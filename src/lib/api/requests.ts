@@ -260,7 +260,8 @@ export async function fetchAdminStats(options?: { fromDate?: string; toDate?: st
   }
 
   const revenue = filteredPaid.reduce((sum, r) => sum + (r.amount_paid ?? 0), 0)
-  const activeRows = rows.filter((r) => r.payment_status !== 'pending')
+  // Admin metrics only include gateway-confirmed paid orders
+  const activeRows = paidRows
 
   return {
     total: activeRows.length,
@@ -287,8 +288,8 @@ export async function fetchAdminStats(options?: { fromDate?: string; toDate?: st
       .filter((r) => r.category === 'newspaper')
       .reduce((sum, r) => sum + (r.amount_paid ?? 0), 0),
     paidCount: paidRows.length,
-    pendingPaymentCount: rows.filter((r) => r.payment_status === 'pending').length,
-    failedPaymentCount: rows.filter((r) => r.payment_status === 'failed').length,
+    pendingPaymentCount: 0,
+    failedPaymentCount: 0,
   }
 }
 
@@ -321,7 +322,12 @@ export async function fetchAllRequests(filters?: {
   }
 
   const sb = getSupabase()!
-  let query = sb.from('service_requests').select('*').order('submitted_at', { ascending: false })
+  // Only show gateway-confirmed paid orders in admin (not abandoned checkouts)
+  let query = sb
+    .from('service_requests')
+    .select('*')
+    .eq('payment_status', 'paid')
+    .order('submitted_at', { ascending: false })
 
   if (filters?.status && filters.status !== 'all') {
     query = query.eq('status', filters.status)
