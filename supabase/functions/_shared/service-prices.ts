@@ -11,12 +11,20 @@ const AFFIDAVIT_STATE_PRICES: Record<string, number> = {
   Abia: 3000,
 }
 
+/** Affidavit types with a fixed price regardless of state */
+const AFFIDAVIT_FIXED_PRICES: Record<string, number> = {
+  'change-of-timizdigital': 200,
+}
+
 export function getServicePrice(
   serviceId: string,
   category?: string,
   coveredState?: string,
 ): number | null {
   if (category === 'affidavit') {
+    if (AFFIDAVIT_FIXED_PRICES[serviceId] !== undefined) {
+      return AFFIDAVIT_FIXED_PRICES[serviceId]
+    }
     if (!coveredState) return null
     return AFFIDAVIT_STATE_PRICES[coveredState] ?? null
   }
@@ -26,7 +34,7 @@ export function getServicePrice(
   }
 
   // Fallback for legacy calls
-  return NEWSPAPER_PRICES[serviceId] ?? AFFIDAVIT_STATE_PRICES.Rivers ?? null
+  return AFFIDAVIT_FIXED_PRICES[serviceId] ?? NEWSPAPER_PRICES[serviceId] ?? AFFIDAVIT_STATE_PRICES.Rivers ?? null
 }
 
 function randomCode(): string {

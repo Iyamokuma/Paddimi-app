@@ -159,6 +159,20 @@ export const AFFIDAVIT_SPECIFIC_FIELDS: Record<string, FormFieldDef[]> = {
     { id: 'placeOfPurchase', label: 'Place of Purchase of Engine', type: 'text', required: true, fullWidth: true },
     { id: 'passportPhoto', label: 'Passport Photo', type: 'livePhoto', required: true },
   ],
+  'change-of-timizdigital': [
+    { id: 'oldBusinessName', label: 'Old Business Name', type: 'text', required: true },
+    { id: 'newBusinessName', label: 'New Business Name', type: 'text', required: true },
+    { id: 'cacRegistrationNumber', label: 'CAC Registration Number', type: 'text', required: true },
+    {
+      id: 'reason', label: 'Reason for Change', type: 'select', required: true,
+      options: [
+        { value: 'rebranding', label: 'Rebranding' },
+        { value: 'ownership-change', label: 'Change of Ownership' },
+        { value: 'other', label: 'Other' },
+      ],
+    },
+    { id: 'passportPhoto', label: 'Passport Photo', type: 'livePhoto', required: true },
+  ],
 }
 
 export function getAffidavitFields(serviceId: string): FormFieldDef[] {

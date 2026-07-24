@@ -18,6 +18,11 @@ export const AFFIDAVIT_STATE_PRICES: Record<string, number> = {
   Abia: 3000,
 }
 
+/** Affidavit types with a fixed price regardless of state */
+export const AFFIDAVIT_FIXED_PRICES: Record<string, number> = {
+  'change-of-timizdigital': 200,
+}
+
 export const affidavitServices: ServiceItem[] = [
   {
     id: 'change-of-name',
@@ -107,6 +112,14 @@ export const affidavitServices: ServiceItem[] = [
     price: AFFIDAVIT_STATE_PRICES.Rivers,
     icon: 'Cog',
   },
+  {
+    id: 'change-of-timizdigital',
+    category: 'affidavit',
+    name: 'Affidavit of Change of TimizDigital (Business Name)',
+    description: 'Sworn declaration for change of registered business name.',
+    price: AFFIDAVIT_FIXED_PRICES['change-of-timizdigital'],
+    icon: 'Building2',
+  },
 ]
 
 export const newspaperServices: ServiceItem[] = [
@@ -180,6 +193,10 @@ export function getAffidavitPriceForState(state: string): number | null {
   return AFFIDAVIT_STATE_PRICES[state] ?? null
 }
 
+export function getAffidavitFixedPrice(serviceId: string): number | null {
+  return AFFIDAVIT_FIXED_PRICES[serviceId] ?? null
+}
+
 const NEWSPAPER_PRICES: Record<string, number> = {
   'name-change-publication': 10000,
   'name-correction-publication': 10000,
@@ -198,6 +215,8 @@ export function getCheckoutPrice(
   options?: { coveredState?: string },
 ): number {
   if (category === 'affidavit') {
+    const fixed = getAffidavitFixedPrice(serviceId)
+    if (fixed !== null) return fixed
     const state = options?.coveredState ?? ''
     return getAffidavitPriceForState(state) ?? 0
   }
