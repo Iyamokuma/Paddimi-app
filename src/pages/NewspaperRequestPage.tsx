@@ -294,13 +294,8 @@ export function NewspaperRequestPage() {
                   <p className="font-medium">Secure payment at checkout</p>
                   <p className="mt-1 text-brand-600">
                     Pay with debit/credit card, bank transfer, or USSD. After payment is confirmed,
-                    your code will be sent to{' '}
-                    {notifyChannels.length === 2
-                      ? 'your phone and email'
-                      : notifyChannels.includes('sms')
-                        ? `your phone (${values.phone})`
-                        : `your email (${values.email})`}
-                    .
+                    your code will be emailed to <strong>{values.email}</strong>
+                    {values.phone ? ` and SMS to ${values.phone}` : ''}.
                   </p>
                 </div>
               </div>

@@ -38,8 +38,8 @@ export const NEWSPAPER_SPECIFIC_FIELDS: Record<string, FormFieldDef[]> = {
 
 export const NEWSPAPER_CONTACT_FIELDS: FormFieldDef[] = [
   { id: 'fullName', label: 'Full Name / Organisation', type: 'text', required: true },
-  { id: 'phone', label: 'Phone Number', type: 'text', required: false, placeholder: '+234 801 234 5678', hint: 'Required if you choose SMS delivery' },
-  { id: 'email', label: 'Email Address', type: 'text', required: false, placeholder: 'you@email.com', hint: 'Required if you choose email delivery' },
+  { id: 'email', label: 'Email Address', type: 'text', required: true, placeholder: 'you@email.com', hint: 'Required — your code and download link are sent here' },
+  { id: 'phone', label: 'Phone Number (optional)', type: 'text', required: false, placeholder: '+234 801 234 5678', hint: 'Optional — for SMS updates if provided' },
   { id: 'referralCode', label: 'Referral Code', type: 'text', required: false, placeholder: 'Optional' },
   { id: 'state', label: 'State', type: 'text', required: true },
   { id: 'preferredNewspaper', label: 'Preferred Newspaper', type: 'text', required: false, placeholder: 'e.g. The Punch, Vanguard' },

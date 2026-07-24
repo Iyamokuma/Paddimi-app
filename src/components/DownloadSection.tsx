@@ -107,9 +107,12 @@ export function DownloadSection() {
             <div className="flex items-start gap-3">
               <Loader2 className="mt-0.5 h-5 w-5 shrink-0 animate-spin text-gold-600" />
               <div>
-                <p className="font-medium text-gold-800">{request.serviceName}</p>
+                <p className="font-medium text-gold-800">Still processing</p>
+                <p className="mt-1 text-sm font-medium text-gold-800">{request.serviceName}</p>
                 <p className="mt-1 text-sm text-gold-700">
-                  Your document is still being processed. You&apos;ll receive SMS and email notification when it&apos;s ready for download.
+                  Your {request.category === 'newspaper' ? 'publication' : 'affidavit'} is not ready yet.
+                  We will email you when it is done. Then return here and enter your redemption code{' '}
+                  <span className="font-mono font-semibold">{request.code}</span> to download.
                 </p>
               </div>
             </div>

@@ -12,11 +12,13 @@ export function getCustomerName(formData: Record<string, unknown> | null | undef
   return 'Customer'
 }
 
-export function hasContactInfo(phone?: string, email?: string): boolean {
-  const phoneOk = Boolean(phone?.trim())
+export function hasRequiredEmail(email?: string): boolean {
   const trimmedEmail = email?.trim() ?? ''
-  const emailOk = trimmedEmail.length > 0 && /\S+@\S+\.\S+/.test(trimmedEmail)
-  return phoneOk || emailOk
+  return trimmedEmail.length > 0 && /\S+@\S+\.\S+/.test(trimmedEmail)
+}
+
+export function hasContactInfo(_phone?: string, email?: string): boolean {
+  return hasRequiredEmail(email)
 }
 
 export function getNotifyChannels(phone?: string, email?: string): NotifyChannel[] {

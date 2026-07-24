@@ -54,19 +54,20 @@ export function AdminRequestDetailPage() {
 
   useEffect(() => { load() }, [id])
 
-  const notifyCustomer = async (
-    req: ServiceRequestRow,
-  ) => {
+  const notifyCustomer = async (req: ServiceRequestRow) => {
     const payload = {
       code: req.redemption_code,
       serviceName: req.service_name,
+      category: req.category,
       phone: req.contact_phone ?? '',
+      customerName: getCustomerName(req.form_data as Record<string, unknown>),
     }
-    const channels = getNotifyChannels(req.contact_phone ?? undefined, req.contact_email ?? undefined)
-    if (channels.includes('email') && req.contact_email) {
+
+    if (req.contact_email) {
       await sendNotification(req.id, 'email', req.contact_email, 'document_approved', payload)
     }
-    if (channels.includes('sms') && req.contact_phone) {
+
+    if (req.contact_phone) {
       await sendNotification(req.id, 'sms', req.contact_phone, 'document_approved', payload)
     }
   }
@@ -98,7 +99,7 @@ export function AdminRequestDetailPage() {
     try {
       await approveRequest(request.id)
       await notifyCustomer(request)
-      setMessage('Request approved — customer can download with their code')
+      setMessage('Marked as done — customer notified by email to download with their code')
       await load()
     } catch (e) {
       setMessage(e instanceof Error ? e.message : 'Approval failed')
@@ -325,9 +326,9 @@ export function AdminRequestDetailPage() {
           </Card>
 
           <Card className="!p-5 ring-2 ring-brand-100">
-            <h3 className="font-semibold">Prepare &amp; Approve</h3>
+            <h3 className="font-semibold">Prepare &amp; Dispatch</h3>
             <p className="mt-1 text-xs text-muted">
-              Admin prepares the document, uploads the finished PDF, then approves so the customer can download.
+              Review the customer details, upload the finished PDF, then mark as done to email the customer.
             </p>
 
             <ol className="mt-4 space-y-3 text-sm">
@@ -338,8 +339,8 @@ export function AdminRequestDetailPage() {
                   1
                 </span>
                 <div className="flex-1">
-                  <p className="font-medium">Mark as processing</p>
-                  <p className="text-xs text-muted">Start work on this request</p>
+                  <p className="font-medium">Mark as in process</p>
+                  <p className="text-xs text-muted">Start preparing this request</p>
                   {request.status === 'submitted' && (
                     <Button
                       size="sm"
@@ -347,7 +348,7 @@ export function AdminRequestDetailPage() {
                       onClick={handleMarkProcessing}
                       disabled={updating}
                     >
-                      {updating ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Start Processing'}
+                      {updating ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Mark as In Process'}
                     </Button>
                   )}
                   {request.status === 'processing' && (
@@ -417,9 +418,10 @@ export function AdminRequestDetailPage() {
                   3
                 </span>
                 <div className="flex-1">
-                  <p className="font-medium">Approve for download</p>
+                  <p className="font-medium">Mark as done</p>
                   <p className="text-xs text-muted">
-                    Customer uses code <span className="font-mono font-semibold">{request.redemption_code}</span> on the homepage
+                    Upload the PDF first, then mark done. Customer gets an email to download with code{' '}
+                    <span className="font-mono font-semibold">{request.redemption_code}</span>
                   </p>
                   {!isApproved && (
                     <Button
@@ -429,13 +431,13 @@ export function AdminRequestDetailPage() {
                       onClick={handleApprove}
                       disabled={updating || !hasDocument}
                     >
-                      {updating ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Approve Request'}
+                      {updating ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Mark as Done'}
                     </Button>
                   )}
                   {isApproved && request.download_available && (
                     <p className="mt-2 flex items-center gap-1 text-xs font-medium text-green-600">
                       <CheckCircle2 className="h-3.5 w-3.5" />
-                      Approved — download enabled
+                      Done — customer notified by email
                     </p>
                   )}
                 </div>

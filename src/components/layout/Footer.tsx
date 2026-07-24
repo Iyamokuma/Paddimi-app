@@ -55,9 +55,19 @@ export function Footer() {
         <div className="gold-line mt-12 opacity-40" />
 
         <div className="mt-8 flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <p className="text-xs text-brand-200/50">
-            &copy; {new Date().getFullYear()} Paddimi Multi Concepts. All rights reserved.
-          </p>
+          <div className="flex flex-col items-center gap-2 sm:items-start">
+            <p className="text-xs text-brand-200/50">
+              &copy; {new Date().getFullYear()} Paddimi Multi Concepts. All rights reserved.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 sm:justify-start">
+              <Link to="/privacy" className="text-xs text-brand-200/70 transition-colors hover:text-gold-300">
+                Privacy Policy
+              </Link>
+              <Link to="/terms" className="text-xs text-brand-200/70 transition-colors hover:text-gold-300">
+                Terms &amp; Conditions
+              </Link>
+            </div>
+          </div>
           <p className="text-xs text-brand-200/50">
             Built by timzdigital
           </p>

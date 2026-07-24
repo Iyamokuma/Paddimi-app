@@ -446,7 +446,7 @@ export async function updateRequestStatus(
   }
 
   const labelMap: Record<string, string> = {
-    approved: 'Approved — Ready for Download',
+    approved: 'Done — Ready for Download',
     published: 'Published — Ready for Download',
     cancelled: 'Cancelled',
   }

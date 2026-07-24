@@ -1,5 +1,6 @@
 import { corsHeaders, jsonResponse } from '../_shared/cors.ts'
 import { getAdminClient } from '../_shared/supabase-admin.ts'
+import { buildMessage } from '../_shared/notification-messages.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1'
 
 const ADMIN_EMAILS = ['paddimi.mc@gmail.com', 'paddimi.mc@yahoo.com']
@@ -9,10 +10,8 @@ async function isAuthorized(req: Request): Promise<boolean> {
   const token = authHeader.replace(/^Bearer\s+/i, '')
   if (!token) return false
 
-  // Internal calls (e.g. from paystack-verify) use the service role key
   if (token === (Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '')) return true
 
-  // Otherwise require a logged-in admin/staff user
   const userClient = createClient(
     Deno.env.get('SUPABASE_URL') ?? '',
     Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -35,7 +34,7 @@ async function sendEmail(to: string, subject: string, html: string): Promise<boo
   const apiKey = Deno.env.get('RESEND_API_KEY')
   if (!apiKey) return false
 
-  const from = Deno.env.get('RESEND_FROM_EMAIL') ?? 'Paddimi <notifications@paddimi.com>'
+  const from = Deno.env.get('RESEND_FROM_EMAIL') ?? 'Paddimi <notify@paddimi.mc.com>'
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
@@ -68,38 +67,6 @@ async function sendSms(to: string, message: string): Promise<boolean> {
     }),
   })
   return res.ok
-}
-
-function buildMessage(type: string, payload: Record<string, string>): { subject: string; html: string; sms: string } {
-  const code = payload.code ?? ''
-  const service = payload.serviceName ?? 'your document'
-
-  switch (type) {
-    case 'new_order':
-      return {
-        subject: `New order: ${service} (${code})`,
-        html: `<p>New request received.</p><p><strong>Customer:</strong> ${payload.customerName ?? 'Customer'}</p><p><strong>Service:</strong> ${service}</p><p><strong>Code:</strong> ${code}</p><p><strong>Phone:</strong> ${payload.phone ?? '—'}</p>`,
-        sms: `New Paddimi order: ${service}. Code ${code}. Customer ${payload.customerName ?? ''}`,
-      }
-    case 'order_confirmed':
-      return {
-        subject: `Order confirmed — your code is ${code}`,
-        html: `<p>Thank you! Your <strong>${service}</strong> order has been received.</p><p><strong>Your download code:</strong> ${code}</p><p>We will notify you when your document is ready. Your code is valid for 1 year.</p>`,
-        sms: `Paddimi: Order confirmed for ${service}. Your download code: ${code}. We'll notify you when it's ready.`,
-      }
-    case 'document_approved':
-      return {
-        subject: `Your ${service} is ready — code ${code}`,
-        html: `<p>Your document has been approved and is ready for download.</p><p><strong>Redemption code:</strong> ${code}</p><p>Visit paddimi.com and enter your code to download. Valid for 1 year.</p>`,
-        sms: `Paddimi: Your ${service} is ready. Download code: ${code}. Visit paddimi.com to download.`,
-      }
-    default:
-      return {
-        subject: 'Paddimi notification',
-        html: `<p>${type}</p>`,
-        sms: `Paddimi notification: ${type}`,
-      }
-  }
 }
 
 Deno.serve(async (req) => {
@@ -141,7 +108,6 @@ Deno.serve(async (req) => {
       sent = await sendSms(recipient, sms)
     }
 
-    // Fan out new-order alerts to both admin inboxes
     if (notificationType === 'new_order' && channel === 'email') {
       for (const adminEmail of ADMIN_EMAILS) {
         if (adminEmail !== recipient) {

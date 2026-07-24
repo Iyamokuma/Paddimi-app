@@ -29,9 +29,7 @@ export function PaymentSuccess({
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const channelLabel = notifyChannels.length === 2
-    ? 'SMS and email'
-    : notifyChannels.includes('sms') ? 'SMS' : 'email'
+  const docKind = category === 'newspaper' ? 'publication' : 'affidavit'
 
   return (
     <>
@@ -57,8 +55,8 @@ export function PaymentSuccess({
             </button>
           </div>
           <p className="mt-4 text-sm text-brand-700">
-            Save this code — enter it on the homepage download section when your document is ready.
-            Valid for {CODE_VALIDITY}, reusable for multiple downloads.
+            Save this code — when your {docKind} is ready we will email you. Return to the homepage download
+            section and enter this code to get your document. Valid for {CODE_VALIDITY}.
           </p>
         </div>
 
@@ -83,22 +81,20 @@ export function PaymentSuccess({
         </div>
 
         <div className="mt-6 rounded-2xl border border-border bg-white p-6 shadow-sm">
-          <h3 className="font-semibold">Code sent via {channelLabel}</h3>
+          <h3 className="font-semibold">Confirmation sent by email</h3>
           <div className="mt-4 space-y-3">
+            <div className="flex items-center gap-3 text-sm">
+              <Mail className="h-5 w-5 text-brand-500" />
+              <span>Email sent to <strong>{contactEmail}</strong></span>
+            </div>
             {notifyChannels.includes('sms') && contactPhone && (
               <div className="flex items-center gap-3 text-sm">
                 <MessageSquare className="h-5 w-5 text-brand-500" />
-                <span>SMS sent to <strong>{contactPhone}</strong></span>
-              </div>
-            )}
-            {notifyChannels.includes('email') && contactEmail && (
-              <div className="flex items-center gap-3 text-sm">
-                <Mail className="h-5 w-5 text-brand-500" />
-                <span>Email sent to <strong>{contactEmail}</strong></span>
+                <span>SMS also sent to <strong>{contactPhone}</strong></span>
               </div>
             )}
             <p className="text-xs text-muted">
-              You will be notified on the same {notifyChannels.length === 2 ? 'channels' : 'channel'} when your document is ready.
+              We will email you again when your {docKind} is ready for download.
             </p>
           </div>
         </div>
@@ -106,9 +102,9 @@ export function PaymentSuccess({
         <div className="mt-8 rounded-xl bg-brand-50/50 p-5 text-sm text-muted ring-1 ring-brand-100">
           <p className="font-medium text-foreground">What happens next?</p>
           <ol className="mt-3 list-inside list-decimal space-y-2">
-            <li>Your request is processed{turnaround ? ` — expected within ${turnaround}` : ''}</li>
-            <li>You&apos;ll receive a {channelLabel.toLowerCase()} notification when your document is ready</li>
-            <li>Enter your code on the homepage download section to get your document</li>
+            <li>We prepare your {docKind}{turnaround ? ` — expected within ${turnaround}` : ''}</li>
+            <li>You&apos;ll receive an email when it is ready to download</li>
+            <li>Enter your code on the homepage download section to get your {docKind}</li>
             <li>Documents are shared electronically only — no physical collection</li>
           </ol>
         </div>

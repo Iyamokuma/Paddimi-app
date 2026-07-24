@@ -311,14 +311,13 @@ export function AffidavitRequestPage() {
                     <span className="text-muted">Delivery</span>
                     <span className="font-medium">Electronic download</span>
                   </div>
-                  {(values.phone || values.email) && (
-                    <div className="flex justify-between gap-4">
-                      <span className="text-muted">Notifications</span>
-                      <span className="font-medium text-right">
-                        {[values.phone && 'SMS', values.email && 'Email'].filter(Boolean).join(' + ')}
-                      </span>
-                    </div>
-                  )}
+                  <div className="flex justify-between gap-4">
+                    <span className="text-muted">Notifications</span>
+                    <span className="font-medium text-right">
+                      Email to {values.email}
+                      {values.phone ? ` + SMS to ${values.phone}` : ''}
+                    </span>
+                  </div>
                   <div className="border-t border-border pt-3 flex justify-between text-base">
                     <span className="font-semibold">Total</span>
                     <span className="font-bold text-brand-600">{formatNaira(total)}</span>
@@ -339,13 +338,9 @@ export function AffidavitRequestPage() {
                 <div>
                   <p className="font-medium">Secure payment at checkout</p>
                   <p className="mt-1 text-brand-600">
-                    Pay with debit/credit card, bank transfer, or USSD. Your redemption code will be sent to{' '}
-                    {notifyChannels.length === 2
-                      ? 'your phone and email'
-                      : notifyChannels.includes('sms')
-                        ? `your phone (${values.phone})`
-                        : `your email (${values.email})`}
-                    {' '}immediately after payment.
+                    Pay with debit/credit card, bank transfer, or USSD. Your redemption code will be emailed to{' '}
+                    <strong>{values.email}</strong>
+                    {values.phone ? ` and SMS to ${values.phone}` : ''} immediately after payment.
                   </p>
                 </div>
               </div>

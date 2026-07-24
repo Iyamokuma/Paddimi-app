@@ -4,6 +4,8 @@ import { HomePage } from './pages/HomePage'
 import { AffidavitRequestPage } from './pages/AffidavitRequestPage'
 import { NewspaperRequestPage } from './pages/NewspaperRequestPage'
 import { TrackRequestPage } from './pages/TrackRequestPage'
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage'
+import { TermsPage } from './pages/TermsPage'
 import { AdminGuard } from './admin/AdminGuard'
 import { AdminLayout } from './admin/AdminLayout'
 import { AdminLoginPage } from './admin/pages/AdminLoginPage'
@@ -23,6 +25,8 @@ export default function App() {
           <Route path="affidavit" element={<AffidavitRequestPage />} />
           <Route path="newspaper" element={<NewspaperRequestPage />} />
           <Route path="track" element={<TrackRequestPage />} />
+          <Route path="privacy" element={<PrivacyPolicyPage />} />
+          <Route path="terms" element={<TermsPage />} />
         </Route>
 
         {/* Admin backoffice */}

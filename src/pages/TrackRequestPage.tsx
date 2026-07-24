@@ -203,7 +203,9 @@ export function TrackRequestPage() {
                 <Loader2 className="mx-auto h-8 w-8 animate-spin text-gold-600" />
                 <p className="mt-3 font-semibold text-gold-800">Still processing</p>
                 <p className="mt-1 text-sm text-gold-700">
-                  You&apos;ll receive SMS and email notification when your document is ready for download.
+                  Your {request.category === 'newspaper' ? 'publication' : 'affidavit'} is not ready yet.
+                  We will email you when it is done. Then enter code{' '}
+                  <strong className="font-mono">{request.code}</strong> on the homepage to download.
                 </p>
               </div>
             )}

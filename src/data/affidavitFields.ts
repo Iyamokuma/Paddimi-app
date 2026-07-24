@@ -192,7 +192,7 @@ export function validateFields(
 }
 
 export const CONTACT_FIELDS: FormFieldDef[] = [
-  { id: 'phone', label: 'Phone Number', type: 'text', required: false, placeholder: '+234 801 234 5678', hint: 'Enter phone, email, or both' },
-  { id: 'email', label: 'Email Address', type: 'text', required: false, placeholder: 'you@email.com', hint: 'Updates are sent to every contact you provide' },
+  { id: 'email', label: 'Email Address', type: 'text', required: true, placeholder: 'you@email.com', hint: 'Required — your code and download link are sent here' },
+  { id: 'phone', label: 'Phone Number (optional)', type: 'text', required: false, placeholder: '+234 801 234 5678', hint: 'Optional — for SMS updates if provided' },
   { id: 'referralCode', label: 'Referral Code', type: 'text', required: false, placeholder: 'Optional' },
 ]
