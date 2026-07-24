@@ -13,7 +13,7 @@ import { StepIndicator } from '../components/ui/StepIndicator'
 import { DynamicFormFields } from '../components/forms/DynamicFormFields'
 import {
   affidavitServices, formatNaira, COVERED_STATES, AFFIDAVIT_TURNAROUND,
-  AFFIDAVIT_STATE_PRICES, getCheckoutPrice,
+  getCheckoutPrice,
 } from '../data/services'
 import {
   getAffidavitFields, getTextFields, getFileFields, validateFields, CONTACT_FIELDS,
@@ -186,12 +186,9 @@ export function AffidavitRequestPage() {
               onChange={(e) => selectState(e.target.value)}
               options={COVERED_STATES.map((state) => ({
                 value: state,
-                label: `${state} State — ${formatNaira(AFFIDAVIT_STATE_PRICES[state])}`,
+                label: `${state} State`,
               }))}
             />
-            <p className="text-xs text-muted">
-              Port Harcourt (Rivers): {formatNaira(AFFIDAVIT_STATE_PRICES.Rivers)} · Abia: {formatNaira(AFFIDAVIT_STATE_PRICES.Abia)}
-            </p>
           </div>
         )}
 
