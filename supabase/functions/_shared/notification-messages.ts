@@ -44,11 +44,18 @@ export function buildMessage(
       return {
         subject: `Payment confirmed — your ${noun} code is ${code}`,
         html: `
-          <p>Hello ${safeName},</p>
-          <p>Thank you for your payment. We have received your <strong>${safeService}</strong> ${noun} request.</p>
-          <p style="font-size:18px;"><strong>Your redemption code:</strong> <span style="letter-spacing:0.2em;">${safeCode}</span></p>
-          <p>Keep this code safe. When your ${noun} is ready, we will email you again. You will then enter this same code on our website to download your document.</p>
-          <p>Your code is valid for 1 year.</p>
+          <div style="font-family:Arial,sans-serif;line-height:1.6;color:#1a1a1a;max-width:560px;">
+            <p>Hello ${safeName},</p>
+            <p>Thank you for your payment. Your <strong>${safeService}</strong> ${noun} request has been received.</p>
+            <p style="font-size:20px;margin:24px 0;">
+              <strong>Your redemption code:</strong><br/>
+              <span style="letter-spacing:0.25em;font-size:28px;font-weight:700;color:#0f5c4c;">${safeCode}</span>
+            </p>
+            <p><strong>Your request would be ready soon.</strong> We are preparing your ${noun}. When it is ready, we will email you again.</p>
+            <p>Then visit our website, go to the Download section, and enter this same code to get your document.</p>
+            <p>Your code is valid for 1 year. Keep this email safe.</p>
+            <p>— The Paddimi Team</p>
+          </div>
         `,
         sms: `Paddimi: Payment confirmed for ${service}. Your download code: ${code}. We'll email you when it's ready.`,
       }

@@ -69,7 +69,7 @@ export function AdminDashboardPage() {
         fetchAllRequests(),
       ])
       setStats(s)
-      setRecent(r.filter((row) => row.payment_status !== 'pending').slice(0, 8))
+      setRecent(r.slice(0, 8))
       setAwaiting(filterAwaitingProcessing(r).slice(0, 10))
       setOverdue(filterOverdueRequests(r).slice(0, 5))
     } finally {
@@ -147,11 +147,9 @@ export function AdminDashboardPage() {
           <StatCard label="Avg. Order Value" value={formatNaira(stats?.avgOrderValue ?? 0)} icon={CircleDollarSign} accent="gold" />
           <StatCard label="Paid Orders" value={stats?.paidCount ?? 0} icon={CheckCircle2} accent="green" />
         </div>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
           <StatCard label="Affidavit Revenue" value={formatNaira(stats?.affidavitRevenue ?? 0)} icon={FileText} />
           <StatCard label="Publication Revenue" value={formatNaira(stats?.newspaperRevenue ?? 0)} icon={Newspaper} />
-          <StatCard label="Awaiting Payment" value={stats?.pendingPaymentCount ?? 0} icon={Clock} accent="gold" />
-          <StatCard label="Failed Payments" value={stats?.failedPaymentCount ?? 0} icon={AlertTriangle} accent="red" />
         </div>
       </div>
 

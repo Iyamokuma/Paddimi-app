@@ -57,19 +57,16 @@ async function runPaymentPopup(
   const email = getCustomerEmail(input)
 
   if (provider === 'paystack') {
-    const publicKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || init.publicKey
+    const publicKey = (import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || init.publicKey || '').trim()
 
     if (!init.paystackEnabled) {
       throw new Error('Paystack is not configured. Add PAYSTACK_SECRET_KEY to Supabase secrets.')
     }
 
-    if (init.accessCode) {
-      await openPaystackPopup({ accessCode: init.accessCode })
-      return
-    }
-
     if (!publicKey) {
-      throw new Error('Paystack could not start. Check PAYSTACK_SECRET_KEY in Supabase secrets.')
+      throw new Error(
+        'Paystack public key missing. Set VITE_PAYSTACK_PUBLIC_KEY (pk_live_...) on Vercel and PAYSTACK_PUBLIC_KEY in Supabase secrets.',
+      )
     }
 
     await openPaystackPopup({
@@ -77,6 +74,7 @@ async function runPaymentPopup(
       amountNaira: init.amount,
       reference: init.reference,
       publicKey,
+      accessCode: init.accessCode,
     })
     return
   }

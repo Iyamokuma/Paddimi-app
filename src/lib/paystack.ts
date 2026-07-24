@@ -1,5 +1,3 @@
-import { isSupabaseConfigured } from './supabase'
-
 declare global {
   interface Window {
     PaystackPop?: {
@@ -38,7 +36,7 @@ function loadPaystackScript(): Promise<void> {
 }
 
 export function isPaystackConfigured(): boolean {
-  return Boolean(import.meta.env.VITE_PAYSTACK_PUBLIC_KEY) || isSupabaseConfigured
+  return Boolean(import.meta.env.VITE_PAYSTACK_PUBLIC_KEY)
 }
 
 export async function openPaystackPopup(options: {
@@ -54,28 +52,37 @@ export async function openPaystackPopup(options: {
     throw new Error('Paystack failed to initialize')
   }
 
-  if (!options.accessCode && (!options.publicKey || !options.email || !options.reference || !options.amountNaira)) {
+  const publicKey = options.publicKey?.trim()
+  if (!publicKey) {
+    throw new Error(
+      'Paystack public key is missing. Add VITE_PAYSTACK_PUBLIC_KEY (pk_live_...) to your frontend env and PAYSTACK_PUBLIC_KEY to Supabase secrets.',
+    )
+  }
+
+  if (!options.accessCode && (!options.email || !options.reference || !options.amountNaira)) {
     throw new Error('Paystack payment could not be started')
   }
 
   return new Promise((resolve, reject) => {
-    const handler = window.PaystackPop!.setup(
-      options.accessCode
-        ? {
-            access_code: options.accessCode,
-            callback: (response) => resolve(response.reference),
-            onClose: () => reject(new Error('Payment cancelled')),
-          }
-        : {
-            key: options.publicKey!,
-            email: options.email!,
-            amount: Math.round(options.amountNaira! * 100),
-            ref: options.reference!,
-            currency: 'NGN',
-            callback: (response) => resolve(response.reference),
-            onClose: () => reject(new Error('Payment cancelled')),
-          },
-    )
+    // Paystack Inline requires the public key even when using an access_code
+    const setupOptions: PaystackOptions = options.accessCode
+      ? {
+          key: publicKey,
+          access_code: options.accessCode,
+          callback: (response) => resolve(response.reference),
+          onClose: () => reject(new Error('Payment cancelled')),
+        }
+      : {
+          key: publicKey,
+          email: options.email!,
+          amount: Math.round(options.amountNaira! * 100),
+          ref: options.reference!,
+          currency: 'NGN',
+          callback: (response) => resolve(response.reference),
+          onClose: () => reject(new Error('Payment cancelled')),
+        }
+
+    const handler = window.PaystackPop!.setup(setupOptions)
     handler.openIframe()
   })
 }
