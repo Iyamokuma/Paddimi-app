@@ -34,7 +34,7 @@ async function sendEmail(to: string, subject: string, html: string): Promise<boo
   const apiKey = Deno.env.get('RESEND_API_KEY')
   if (!apiKey) return false
 
-  const from = Deno.env.get('RESEND_FROM_EMAIL') ?? 'Paddimi <notify@paddimi.mc.com>'
+  const from = Deno.env.get('RESEND_FROM_EMAIL') ?? 'Paddimi <notify@paddimi.com>'
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
