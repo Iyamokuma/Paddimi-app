@@ -1,24 +1,32 @@
-export const SERVICE_PRICES: Record<string, number> = {
-  'change-of-name': 15000,
-  'rearrangement-of-name': 15000,
-  'correction-of-name': 15000,
-  'correction-of-dob': 15000,
-  'confirmation-of-name': 15000,
-  'age-declaration': 12000,
-  'declaration-of-marriage': 18000,
-  death: 15000,
-  'loss-of-sim': 10000,
-  'change-vehicle-plate': 15000,
-  'change-engine-number': 15000,
-  'name-change-publication': 25000,
-  'name-correction-publication': 22000,
-  'loss-of-documents-publication': 20000,
-  'public-announcements': 18000,
-  'congratulatory-messages': 15000,
+const NEWSPAPER_PRICES: Record<string, number> = {
+  'name-change-publication': 10000,
+  'name-correction-publication': 10000,
+  'loss-of-documents-publication': 60000,
+  'public-announcements': 60000,
+  'congratulatory-messages': 60000,
 }
 
-export function getServicePrice(serviceId: string): number | null {
-  return SERVICE_PRICES[serviceId] ?? null
+const AFFIDAVIT_STATE_PRICES: Record<string, number> = {
+  Rivers: 3500,
+  Abia: 3000,
+}
+
+export function getServicePrice(
+  serviceId: string,
+  category?: string,
+  coveredState?: string,
+): number | null {
+  if (category === 'affidavit') {
+    if (!coveredState) return null
+    return AFFIDAVIT_STATE_PRICES[coveredState] ?? null
+  }
+
+  if (category === 'newspaper') {
+    return NEWSPAPER_PRICES[serviceId] ?? null
+  }
+
+  // Fallback for legacy calls
+  return NEWSPAPER_PRICES[serviceId] ?? AFFIDAVIT_STATE_PRICES.Rivers ?? null
 }
 
 function randomCode(): string {

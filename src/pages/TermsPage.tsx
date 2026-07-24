@@ -135,9 +135,8 @@ export function TermsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  <tr><td className="px-4 py-3">Affidavits for Rivers State Judiciary</td><td className="px-4 py-3">N3,000</td></tr>
-                  <tr><td className="px-4 py-3">Affidavits for Abia State Judiciary</td><td className="px-4 py-3">N2,000</td></tr>
-                  <tr><td className="px-4 py-3">Affidavits for Enugu State Judiciary</td><td className="px-4 py-3">N3,000</td></tr>
+                  <tr><td className="px-4 py-3">Affidavits — Rivers State (Port Harcourt)</td><td className="px-4 py-3">N3,500</td></tr>
+                  <tr><td className="px-4 py-3">Affidavits — Abia State</td><td className="px-4 py-3">N3,000</td></tr>
                   <tr><td className="px-4 py-3">Name Change Publications</td><td className="px-4 py-3">N10,000</td></tr>
                   <tr><td className="px-4 py-3">Name Correction Publications</td><td className="px-4 py-3">N10,000</td></tr>
                   <tr><td className="px-4 py-3">Loss of Documents Publication (2x2)</td><td className="px-4 py-3">N60,000</td></tr>

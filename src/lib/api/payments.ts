@@ -56,7 +56,9 @@ async function runPaymentPopup(
 
   if (provider === 'paystack') {
     const publicKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || init.publicKey
-    if (!init.paystackEnabled || !publicKey) return
+    if (!init.paystackEnabled || !publicKey) {
+      throw new Error('Paystack is not fully configured. Add PAYSTACK_PUBLIC_KEY to Supabase secrets (pk_live_...).')
+    }
 
     await openPaystackPopup({
       email,
@@ -68,7 +70,9 @@ async function runPaymentPopup(
   }
 
   const publicKey = import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY || init.publicKey
-  if (!init.flutterwaveEnabled || !publicKey) return
+  if (!init.flutterwaveEnabled || !publicKey) {
+    throw new Error('Flutterwave is not fully configured. Add FLUTTERWAVE_PUBLIC_KEY to Supabase secrets.')
+  }
 
   await openFlutterwaveCheckout({
     email,
