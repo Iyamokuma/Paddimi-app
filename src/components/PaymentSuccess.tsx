@@ -1,5 +1,6 @@
-import { Link } from 'react-router-dom'
-import { CheckCircle2, Mail, MessageSquare, ArrowRight, Download, Clock } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { CheckCircle2, Mail, MessageSquare, ArrowRight, Download, Clock, Home } from 'lucide-react'
 import { Button } from './ui/Button'
 import { PageHeader } from './layout/PageHeader'
 import { formatNaira, CODE_VALIDITY } from '../data/services'
@@ -17,10 +18,23 @@ interface PaymentSuccessProps {
   turnaround?: string
 }
 
+const AUTO_REDIRECT_SECONDS = 10
+
 export function PaymentSuccess({
   serviceName, contactPhone, contactEmail, notifyChannels, total, category, turnaround,
 }: PaymentSuccessProps) {
   const docKind = category === 'newspaper' ? 'publication' : 'affidavit'
+  const navigate = useNavigate()
+  const [secondsLeft, setSecondsLeft] = useState(AUTO_REDIRECT_SECONDS)
+
+  useEffect(() => {
+    if (secondsLeft <= 0) {
+      navigate('/', { replace: true })
+      return
+    }
+    const timer = setTimeout(() => setSecondsLeft((s) => s - 1), 1000)
+    return () => clearTimeout(timer)
+  }, [secondsLeft, navigate])
 
   return (
     <>
@@ -111,7 +125,20 @@ export function PaymentSuccess({
               Go to Download
             </Button>
           </Link>
+          <Button
+            variant="ghost"
+            size="lg"
+            className="w-full sm:w-auto"
+            onClick={() => navigate('/', { replace: true })}
+          >
+            <Home className="h-4 w-4" />
+            Back to Home now
+          </Button>
         </div>
+
+        <p className="mt-4 text-center text-xs text-muted">
+          Returning to the homepage automatically in {secondsLeft}s…
+        </p>
       </div>
     </>
   )

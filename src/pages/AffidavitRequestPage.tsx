@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import {
   UserPen, PenLine, Calendar, Heart, Flower2, Smartphone, Car, Cog,
   ArrowLeftRight, BadgeCheck, CalendarDays, Check, ArrowLeft, ArrowRight,
-  FileText, ShieldCheck,
+  FileText, ShieldCheck, Building2,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Button } from '../components/ui/Button'
@@ -27,7 +27,7 @@ import { getNotifyChannels, hasContactInfo } from '../lib/customer'
 
 const iconMap: Record<string, LucideIcon> = {
   UserPen, PenLine, Calendar, Heart, Flower2, Smartphone, Car, Cog,
-  ArrowLeftRight, BadgeCheck, CalendarDays, FileText,
+  ArrowLeftRight, BadgeCheck, CalendarDays, FileText, Building2,
 }
 
 const steps = [
