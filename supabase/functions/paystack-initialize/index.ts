@@ -73,14 +73,45 @@ Deno.serve(async (req) => {
       { request_id: row.id, status: 'approved', label: 'Approved — Ready for Download', completed: false },
     ])
 
+    const secretKey = Deno.env.get('PAYSTACK_SECRET_KEY') ?? ''
     const publicKey = Deno.env.get('PAYSTACK_PUBLIC_KEY') ?? ''
+
+    let accessCode: string | undefined
+    let authorizationUrl: string | undefined
+
+    if (secretKey) {
+      const paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${secretKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: String(contactEmail).trim(),
+          amount: Math.round(row.amount_paid * 100),
+          reference,
+          currency: 'NGN',
+        }),
+      })
+      const paystackData = await paystackRes.json()
+      if (!paystackData.status) {
+        return jsonResponse(
+          { error: paystackData.message ?? 'Paystack could not start payment' },
+          502,
+        )
+      }
+      accessCode = paystackData.data?.access_code
+      authorizationUrl = paystackData.data?.authorization_url
+    }
 
     return jsonResponse({
       requestId: row.id,
       reference,
       amount: row.amount_paid,
       publicKey,
-      paystackEnabled: Boolean(publicKey && Deno.env.get('PAYSTACK_SECRET_KEY')),
+      accessCode,
+      authorizationUrl,
+      paystackEnabled: Boolean(secretKey && (accessCode || publicKey)),
     })
   } catch (e) {
     return jsonResponse({ error: e instanceof Error ? e.message : 'Server error' }, 500)

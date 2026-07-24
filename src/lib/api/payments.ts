@@ -12,6 +12,8 @@ interface InitializeResponse {
   reference: string
   amount: number
   publicKey: string
+  accessCode?: string
+  authorizationUrl?: string
   flutterwaveEnabled?: boolean
   paystackEnabled?: boolean
 }
@@ -56,8 +58,18 @@ async function runPaymentPopup(
 
   if (provider === 'paystack') {
     const publicKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || init.publicKey
-    if (!init.paystackEnabled || !publicKey) {
-      throw new Error('Paystack is not fully configured. Add PAYSTACK_PUBLIC_KEY to Supabase secrets (pk_live_...).')
+
+    if (!init.paystackEnabled) {
+      throw new Error('Paystack is not configured. Add PAYSTACK_SECRET_KEY to Supabase secrets.')
+    }
+
+    if (init.accessCode) {
+      await openPaystackPopup({ accessCode: init.accessCode })
+      return
+    }
+
+    if (!publicKey) {
+      throw new Error('Paystack could not start. Check PAYSTACK_SECRET_KEY in Supabase secrets.')
     }
 
     await openPaystackPopup({
