@@ -9,10 +9,11 @@ declare global {
 }
 
 interface PaystackOptions {
-  key: string
-  email: string
-  amount: number
-  ref: string
+  key?: string
+  access_code?: string
+  email?: string
+  amount?: number
+  ref?: string
   currency?: string
   callback: (response: { reference: string; status: string }) => void
   onClose?: () => void
@@ -41,10 +42,11 @@ export function isPaystackConfigured(): boolean {
 }
 
 export async function openPaystackPopup(options: {
-  email: string
-  amountNaira: number
-  reference: string
-  publicKey: string
+  email?: string
+  amountNaira?: number
+  reference?: string
+  publicKey?: string
+  accessCode?: string
 }): Promise<string> {
   await loadPaystackScript()
 
@@ -52,16 +54,28 @@ export async function openPaystackPopup(options: {
     throw new Error('Paystack failed to initialize')
   }
 
+  if (!options.accessCode && (!options.publicKey || !options.email || !options.reference || !options.amountNaira)) {
+    throw new Error('Paystack payment could not be started')
+  }
+
   return new Promise((resolve, reject) => {
-    const handler = window.PaystackPop!.setup({
-      key: options.publicKey,
-      email: options.email,
-      amount: Math.round(options.amountNaira * 100),
-      ref: options.reference,
-      currency: 'NGN',
-      callback: (response) => resolve(response.reference),
-      onClose: () => reject(new Error('Payment cancelled')),
-    })
+    const handler = window.PaystackPop!.setup(
+      options.accessCode
+        ? {
+            access_code: options.accessCode,
+            callback: (response) => resolve(response.reference),
+            onClose: () => reject(new Error('Payment cancelled')),
+          }
+        : {
+            key: options.publicKey!,
+            email: options.email!,
+            amount: Math.round(options.amountNaira! * 100),
+            ref: options.reference!,
+            currency: 'NGN',
+            callback: (response) => resolve(response.reference),
+            onClose: () => reject(new Error('Payment cancelled')),
+          },
+    )
     handler.openIframe()
   })
 }
