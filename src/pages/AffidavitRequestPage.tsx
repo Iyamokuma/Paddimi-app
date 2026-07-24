@@ -13,6 +13,7 @@ import { StepIndicator } from '../components/ui/StepIndicator'
 import { DynamicFormFields } from '../components/forms/DynamicFormFields'
 import {
   affidavitServices, formatNaira, COVERED_STATES, AFFIDAVIT_TURNAROUND,
+  AFFIDAVIT_STATE_PRICES, getCheckoutPrice,
 } from '../data/services'
 import {
   getAffidavitFields, getTextFields, getFileFields, validateFields, CONTACT_FIELDS,
@@ -61,7 +62,12 @@ export function AffidavitRequestPage() {
   )
   const deponentFields = useMemo(() => getTextFields(allFields), [allFields])
   const fileFields = useMemo(() => getFileFields(allFields), [allFields])
-  const total = service?.price ?? 0
+  const total = useMemo(
+    () => (selectedService && coveredState
+      ? getCheckoutPrice('affidavit', selectedService, { coveredState })
+      : 0),
+    [selectedService, coveredState],
+  )
   const notifyChannels = getNotifyChannels(values.phone, values.email)
 
   const updateValue = (id: string, value: string) => {
@@ -92,7 +98,7 @@ export function AffidavitRequestPage() {
           && validateFields(CONTACT_FIELDS, values, files)
           && hasContactInfo(values.phone, values.email)
       case 4: return fileFields.length === 0 || validateFields(fileFields, values, files)
-      case 5: return hasContactInfo(values.phone, values.email)
+      case 5: return hasContactInfo(values.phone, values.email) && total > 0
       default: return false
     }
   }
@@ -180,11 +186,11 @@ export function AffidavitRequestPage() {
               onChange={(e) => selectState(e.target.value)}
               options={COVERED_STATES.map((state) => ({
                 value: state,
-                label: `${state} State`,
+                label: `${state} State — ${formatNaira(AFFIDAVIT_STATE_PRICES[state])}`,
               }))}
             />
             <p className="text-xs text-muted">
-              Currently serving: {COVERED_STATES.map((s) => `${s} State`).join(', ')}
+              Port Harcourt (Rivers): {formatNaira(AFFIDAVIT_STATE_PRICES.Rivers)} · Abia: {formatNaira(AFFIDAVIT_STATE_PRICES.Abia)}
             </p>
           </div>
         )}

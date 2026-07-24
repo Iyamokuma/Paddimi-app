@@ -12,13 +12,19 @@ export const CODE_VALIDITY = '1 year'
 /** States currently served for affidavit requests */
 export const COVERED_STATES = ['Rivers', 'Abia'] as const
 
+/** Affidavit pricing by state (Port Harcourt = Rivers) */
+export const AFFIDAVIT_STATE_PRICES: Record<string, number> = {
+  Rivers: 3500,
+  Abia: 3000,
+}
+
 export const affidavitServices: ServiceItem[] = [
   {
     id: 'change-of-name',
     category: 'affidavit',
     name: 'Affidavit of Change of Name',
     description: 'Sworn declaration for official change of name, including marriage-related changes.',
-    price: 15000,
+    price: AFFIDAVIT_STATE_PRICES.Rivers,
     icon: 'UserPen',
   },
   {
@@ -26,7 +32,7 @@ export const affidavitServices: ServiceItem[] = [
     category: 'affidavit',
     name: 'Affidavit of Rearrangement of Name',
     description: 'Correct the order of your surname, first name, and middle name on official records.',
-    price: 15000,
+    price: AFFIDAVIT_STATE_PRICES.Rivers,
     icon: 'ArrowLeftRight',
   },
   {
@@ -34,7 +40,7 @@ export const affidavitServices: ServiceItem[] = [
     category: 'affidavit',
     name: 'Affidavit of Correction of Name',
     description: 'Fix wrong spelling, omission, or addition of name on official documents.',
-    price: 15000,
+    price: AFFIDAVIT_STATE_PRICES.Rivers,
     icon: 'PenLine',
   },
   {
@@ -42,7 +48,7 @@ export const affidavitServices: ServiceItem[] = [
     category: 'affidavit',
     name: 'Affidavit of Correction of Date of Birth',
     description: 'Sworn correction of wrong date of birth on official documents.',
-    price: 15000,
+    price: AFFIDAVIT_STATE_PRICES.Rivers,
     icon: 'Calendar',
   },
   {
@@ -50,7 +56,7 @@ export const affidavitServices: ServiceItem[] = [
     category: 'affidavit',
     name: 'Affidavit of Confirmation of Name',
     description: 'Confirm your legal name and any alternate names for official purposes.',
-    price: 12000,
+    price: AFFIDAVIT_STATE_PRICES.Rivers,
     icon: 'BadgeCheck',
   },
   {
@@ -58,7 +64,7 @@ export const affidavitServices: ServiceItem[] = [
     category: 'affidavit',
     name: 'Affidavit of Age Declaration',
     description: 'Declare age for a beneficiary when birth certificate is unavailable or missing.',
-    price: 12000,
+    price: AFFIDAVIT_STATE_PRICES.Rivers,
     icon: 'CalendarDays',
   },
   {
@@ -66,7 +72,7 @@ export const affidavitServices: ServiceItem[] = [
     category: 'affidavit',
     name: 'Affidavit of Declaration of Marriage',
     description: 'Statutory declaration of marriage under customary or Islamic law.',
-    price: 18000,
+    price: AFFIDAVIT_STATE_PRICES.Rivers,
     icon: 'Heart',
   },
   {
@@ -74,7 +80,7 @@ export const affidavitServices: ServiceItem[] = [
     category: 'affidavit',
     name: 'Affidavit of Death',
     description: 'Sworn declaration of death for legal and administrative purposes.',
-    price: 15000,
+    price: AFFIDAVIT_STATE_PRICES.Rivers,
     icon: 'Flower2',
   },
   {
@@ -82,7 +88,7 @@ export const affidavitServices: ServiceItem[] = [
     category: 'affidavit',
     name: 'Affidavit of Loss of SIM Card',
     description: 'Declaration of lost SIM card for network provider and recovery processes.',
-    price: 10000,
+    price: AFFIDAVIT_STATE_PRICES.Rivers,
     icon: 'Smartphone',
   },
   {
@@ -90,7 +96,7 @@ export const affidavitServices: ServiceItem[] = [
     category: 'affidavit',
     name: 'Affidavit for Change of Vehicle Plate Number',
     description: 'Sworn statement for change of vehicle registration plate number.',
-    price: 15000,
+    price: AFFIDAVIT_STATE_PRICES.Rivers,
     icon: 'Car',
   },
   {
@@ -98,7 +104,7 @@ export const affidavitServices: ServiceItem[] = [
     category: 'affidavit',
     name: 'Affidavit of Change of Engine Number',
     description: 'Declaration for change of vehicle engine number after replacement or purchase.',
-    price: 15000,
+    price: AFFIDAVIT_STATE_PRICES.Rivers,
     icon: 'Cog',
   },
 ]
@@ -109,7 +115,7 @@ export const newspaperServices: ServiceItem[] = [
     category: 'newspaper',
     name: 'Name Change Publication',
     description: 'Newspaper publication for official name change — requires affidavit and marriage certificate.',
-    price: 25000,
+    price: 10000,
     turnaround: NEWSPAPER_TURNAROUND,
     icon: 'Newspaper',
     requiredDocuments: ['Affidavit', 'Marriage Certificate'],
@@ -119,7 +125,7 @@ export const newspaperServices: ServiceItem[] = [
     category: 'newspaper',
     name: 'Name Correction Publication',
     description: 'Publication for name correction — requires affidavit and NIN.',
-    price: 22000,
+    price: 10000,
     turnaround: NEWSPAPER_TURNAROUND,
     icon: 'PenLine',
     requiredDocuments: ['Affidavit', 'NIN'],
@@ -129,7 +135,7 @@ export const newspaperServices: ServiceItem[] = [
     category: 'newspaper',
     name: 'Loss of Documents Publication',
     description: 'Public notice for lost documents such as certificates, NIN, or licences.',
-    price: 20000,
+    price: 60000,
     turnaround: NEWSPAPER_TURNAROUND,
     icon: 'AlertCircle',
     requiredDocuments: ['Affidavit of Loss'],
@@ -139,7 +145,7 @@ export const newspaperServices: ServiceItem[] = [
     category: 'newspaper',
     name: 'Public Announcements',
     description: 'General public notices for legal, community, or personal matters.',
-    price: 18000,
+    price: 60000,
     turnaround: NEWSPAPER_TURNAROUND,
     icon: 'Megaphone',
   },
@@ -148,7 +154,7 @@ export const newspaperServices: ServiceItem[] = [
     category: 'newspaper',
     name: 'Congratulatory Messages',
     description: 'Celebrate graduations, weddings, promotions, anniversaries, childbirth, and more.',
-    price: 15000,
+    price: 60000,
     turnaround: NEWSPAPER_TURNAROUND,
     icon: 'PartyPopper',
   },
@@ -168,6 +174,34 @@ export function formatNaira(amount: number): string {
     currency: 'NGN',
     minimumFractionDigits: 0,
   }).format(amount)
+}
+
+export function getAffidavitPriceForState(state: string): number | null {
+  return AFFIDAVIT_STATE_PRICES[state] ?? null
+}
+
+const NEWSPAPER_PRICES: Record<string, number> = {
+  'name-change-publication': 10000,
+  'name-correction-publication': 10000,
+  'loss-of-documents-publication': 60000,
+  'public-announcements': 60000,
+  'congratulatory-messages': 60000,
+}
+
+export function getNewspaperPrice(serviceId: string): number | null {
+  return NEWSPAPER_PRICES[serviceId] ?? null
+}
+
+export function getCheckoutPrice(
+  category: 'affidavit' | 'newspaper',
+  serviceId: string,
+  options?: { coveredState?: string },
+): number {
+  if (category === 'affidavit') {
+    const state = options?.coveredState ?? ''
+    return getAffidavitPriceForState(state) ?? 0
+  }
+  return getNewspaperPrice(serviceId) ?? 0
 }
 
 /** 4-character alphanumeric redemption code */

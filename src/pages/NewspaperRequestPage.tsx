@@ -10,7 +10,7 @@ import { Card } from '../components/ui/Card'
 import { StepIndicator } from '../components/ui/StepIndicator'
 import { DynamicFormFields } from '../components/forms/DynamicFormFields'
 import {
-  newspaperServices, formatNaira,
+  newspaperServices, formatNaira, getCheckoutPrice,
 } from '../data/services'
 import {
   getNewspaperTextFields, getNewspaperFileFields,
@@ -59,7 +59,7 @@ export function NewspaperRequestPage() {
     () => (selectedService ? getNewspaperFileFields(selectedService) : []),
     [selectedService],
   )
-  const total = service?.price ?? 0
+  const total = selectedService ? getCheckoutPrice('newspaper', selectedService) : 0
   const notifyChannels = getNotifyChannels(values.phone, values.email)
 
   const updateValue = (id: string, value: string) => {

@@ -1,3 +1,5 @@
+import { isSupabaseConfigured } from './supabase'
+
 declare global {
   interface Window {
     PaystackPop?: {
@@ -35,7 +37,7 @@ function loadPaystackScript(): Promise<void> {
 }
 
 export function isPaystackConfigured(): boolean {
-  return Boolean(import.meta.env.VITE_PAYSTACK_PUBLIC_KEY)
+  return Boolean(import.meta.env.VITE_PAYSTACK_PUBLIC_KEY) || isSupabaseConfigured
 }
 
 export async function openPaystackPopup(options: {

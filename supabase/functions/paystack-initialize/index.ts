@@ -24,7 +24,8 @@ Deno.serve(async (req) => {
       paymentMethod,
     } = body
 
-    const price = getServicePrice(serviceId)
+    const coveredState = typeof formData?.coveredState === 'string' ? formData.coveredState : undefined
+    const price = getServicePrice(serviceId, category, coveredState)
     if (!price) return jsonResponse({ error: 'Invalid service' }, 400)
     if (!category || !serviceId || !serviceName) {
       return jsonResponse({ error: 'Missing required fields' }, 400)
@@ -55,7 +56,7 @@ Deno.serve(async (req) => {
         contact_email: contactEmail || null,
         referral_code: referralCode || null,
         form_data: formData ?? {},
-        payment_method: paymentMethod ?? 'flutterwave',
+        payment_method: paymentMethod ?? 'paystack',
         amount_paid: price,
         expires_at: addYears(now, 1).toISOString(),
         estimated_ready_at: estimatedReady.toISOString(),

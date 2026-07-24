@@ -24,7 +24,8 @@ Deno.serve(async (req) => {
       paymentMethod,
     } = body
 
-    const price = getServicePrice(serviceId)
+    const coveredState = typeof formData?.coveredState === 'string' ? formData.coveredState : undefined
+    const price = getServicePrice(serviceId, category, coveredState)
     if (!price) return jsonResponse({ error: 'Invalid service' }, 400)
     if (!category || !serviceId || !serviceName) {
       return jsonResponse({ error: 'Missing required fields' }, 400)
