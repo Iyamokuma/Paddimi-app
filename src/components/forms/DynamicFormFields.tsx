@@ -5,7 +5,7 @@ import { SingleFileUpload } from '../ui/SingleFileUpload'
 import { PhotoInput } from '../ui/PhotoInput'
 import { nigerianStates } from '../../data/services'
 import type { FormFieldDef } from '../../types'
-import { isFieldVisible } from '../../data/affidavitFields'
+import { isFieldVisible, selectHasOtherOption, getOtherFieldId } from '../../data/affidavitFields'
 
 interface DynamicFormFieldsProps {
   fields: FormFieldDef[]
@@ -74,6 +74,8 @@ export function DynamicFormFields({
           const options = field.id === 'state'
             ? nigerianStates.map((s) => ({ value: s, label: s }))
             : (field.options ?? [])
+          const otherFieldId = getOtherFieldId(field.id)
+          const showOtherInput = selectHasOtherOption(field) && values[field.id] === 'other'
 
           return (
             <div key={field.id} className={colSpan}>
@@ -85,6 +87,17 @@ export function DynamicFormFields({
                 onChange={(e) => onChange(field.id, e.target.value)}
                 options={options}
               />
+              {showOtherInput && (
+                <div className="mt-3">
+                  <Input
+                    label="Please specify"
+                    required
+                    value={values[otherFieldId] ?? ''}
+                    onChange={(e) => onChange(otherFieldId, e.target.value)}
+                    placeholder={`Describe your ${field.label.toLowerCase()}`}
+                  />
+                </div>
+              )}
               {field.hint && <p className="mt-1 text-xs text-muted">{field.hint}</p>}
             </div>
           )

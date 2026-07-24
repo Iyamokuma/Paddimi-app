@@ -71,7 +71,14 @@ export function AffidavitRequestPage() {
   const notifyChannels = getNotifyChannels(values.phone, values.email)
 
   const updateValue = (id: string, value: string) => {
-    setValues((prev) => ({ ...prev, [id]: value }))
+    setValues((prev) => {
+      const next = { ...prev, [id]: value }
+      if (value !== 'other' && id.endsWith('Other') === false) {
+        const otherId = `${id}Other`
+        if (otherId in next) delete next[otherId]
+      }
+      return next
+    })
   }
 
   const updateFiles = (id: string, f: File[]) => {

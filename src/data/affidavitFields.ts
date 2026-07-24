@@ -178,17 +178,39 @@ export function isFieldVisible(field: FormFieldDef, values: Record<string, strin
   return values[field.dependsOn.field] === field.dependsOn.value
 }
 
+export function selectHasOtherOption(field: FormFieldDef): boolean {
+  return field.type === 'select' && (field.options?.some((option) => option.value === 'other') ?? false)
+}
+
+export function getOtherFieldId(fieldId: string): string {
+  return `${fieldId}Other`
+}
+
+export function validateOtherSelectFields(
+  fields: FormFieldDef[],
+  values: Record<string, string>,
+): boolean {
+  return fields.every((field) => {
+    if (!isFieldVisible(field, values)) return true
+    if (!selectHasOtherOption(field)) return true
+    if (values[field.id] !== 'other') return true
+    return !!values[getOtherFieldId(field.id)]?.trim()
+  })
+}
+
 export function validateFields(
   fields: FormFieldDef[],
   values: Record<string, string>,
   files: Record<string, File[]>,
 ): boolean {
-  return fields.every((field) => {
+  const baseValid = fields.every((field) => {
     if (!isFieldVisible(field, values)) return true
     if (!field.required) return true
     if (field.type === 'file' || field.type === 'livePhoto') return (files[field.id]?.length ?? 0) > 0
     return !!values[field.id]?.trim()
   })
+
+  return baseValid && validateOtherSelectFields(fields, values)
 }
 
 export const CONTACT_FIELDS: FormFieldDef[] = [
