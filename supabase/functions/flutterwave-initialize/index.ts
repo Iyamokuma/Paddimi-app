@@ -29,8 +29,8 @@ Deno.serve(async (req) => {
     if (!category || !serviceId || !serviceName) {
       return jsonResponse({ error: 'Missing required fields' }, 400)
     }
-    if (!contactPhone && !contactEmail) {
-      return jsonResponse({ error: 'Phone or email is required' }, 400)
+    if (!contactEmail || !/\S+@\S+\.\S+/.test(String(contactEmail).trim())) {
+      return jsonResponse({ error: 'A valid email address is required' }, 400)
     }
 
     const sb = getAdminClient()
