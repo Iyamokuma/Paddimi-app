@@ -28,6 +28,7 @@ export function AdminRequestDetailPage() {
   const [newStatus, setNewStatus] = useState('')
   const [message, setMessage] = useState('')
   const [completedDocUrl, setCompletedDocUrl] = useState<string | null>(null)
+  const [selectedFileName, setSelectedFileName] = useState('')
 
   const load = async () => {
     if (!id) return
@@ -136,19 +137,27 @@ export function AdminRequestDetailPage() {
   }
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file || !request) return
+    const input = e.target
+    const file = input.files?.[0]
+    if (!file) return
+    if (!request) {
+      setMessage('Request failed to load — refresh the page and try again')
+      return
+    }
+    setSelectedFileName(file.name)
     setUploading(true)
     setMessage('')
     try {
       await uploadCompletedDocument(request.id, file)
-      setMessage('PDF uploaded — click Approve when ready to enable customer download')
+      setMessage(`"${file.name}" uploaded — click Mark as Done when ready to notify the customer`)
       await load()
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : 'Upload failed')
+      console.error('PDF upload failed:', err)
+      setMessage(err instanceof Error ? err.message : 'Upload failed — please try again')
+    } finally {
+      setUploading(false)
+      input.value = ''
     }
-    setUploading(false)
-    e.target.value = ''
   }
 
   if (loading) {
@@ -202,7 +211,7 @@ export function AdminRequestDetailPage() {
 
       {message && (
         <div className={`rounded-xl px-4 py-3 text-sm ${
-          message.toLowerCase().includes('fail') || message.toLowerCase().includes('before')
+          /fail|before|expired|denied|too large|error/i.test(message)
             ? 'bg-red-50 text-red-700'
             : 'bg-brand-50 text-brand-700'
         }`}>
@@ -367,15 +376,21 @@ export function AdminRequestDetailPage() {
                 </span>
                 <div className="flex-1">
                   <p className="font-medium">Upload customer PDF</p>
-                  <p className="text-xs text-muted">The finished affidavit or publication document</p>
+                  <p className="text-xs text-muted">The finished affidavit or publication document (max 25MB)</p>
                   <label className="mt-2 flex cursor-pointer flex-col items-center rounded-xl border-2 border-dashed border-brand-200 bg-brand-50/50 p-4 transition-colors hover:border-brand-400 hover:bg-brand-50">
-                    <Upload className="h-6 w-6 text-brand-500" />
+                    {uploading ? (
+                      <Loader2 className="h-6 w-6 animate-spin text-brand-500" />
+                    ) : (
+                      <Upload className="h-6 w-6 text-brand-500" />
+                    )}
                     <span className="mt-1.5 text-xs font-medium text-brand-600">
-                      {uploading ? 'Uploading…' : hasDocument ? 'Replace PDF' : 'Choose PDF file'}
+                      {uploading
+                        ? `Uploading ${selectedFileName || 'file'}…`
+                        : hasDocument ? 'Replace PDF' : 'Choose PDF file'}
                     </span>
                     <input
                       type="file"
-                      accept=".pdf,application/pdf"
+                      accept=".pdf,application/pdf,.jpg,.jpeg,.png,image/jpeg,image/png"
                       className="hidden"
                       onChange={handleUpload}
                       disabled={uploading}
