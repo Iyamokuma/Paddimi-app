@@ -48,6 +48,7 @@ export function AffidavitRequestPage() {
   const [redemptionCode, setRedemptionCode] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
+  const [agreedToTerms, setAgreedToTerms] = useState(false)
   const paymentOptions = useMemo(() => getAvailablePaymentProviders(), [])
   const [paymentProvider, setPaymentProvider] = useState<PaymentProvider | null>(null)
 
@@ -98,7 +99,7 @@ export function AffidavitRequestPage() {
 
   const canProceed = () => {
     switch (step) {
-      case 1: return !!coveredState
+      case 1: return !!coveredState && agreedToTerms
       case 2: return !!selectedService
       case 3:
         return validateFields(deponentFields, values, files)
@@ -196,6 +197,27 @@ export function AffidavitRequestPage() {
                 label: `${state} State`,
               }))}
             />
+            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border p-4 text-sm">
+              <input
+                type="checkbox"
+                checked={agreedToTerms}
+                onChange={(e) => setAgreedToTerms(e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-border text-brand-600 focus:ring-brand-500"
+              />
+              <span className="text-muted">
+                I have read and agree to Paddimi's{' '}
+                <Link
+                  to="/terms"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-medium text-brand-600 underline hover:text-brand-700"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Terms &amp; Conditions
+                </Link>
+                .
+              </span>
+            </label>
           </div>
         )}
 

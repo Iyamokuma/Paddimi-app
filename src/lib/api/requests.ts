@@ -493,21 +493,48 @@ export async function approveRequest(id: string) {
   await updateRequestStatus(id, 'approved', { downloadAvailable: true })
 }
 
+const MAX_UPLOAD_BYTES = 25 * 1024 * 1024 // 25MB
+
 export async function uploadCompletedDocument(requestId: string, file: File): Promise<string> {
   if (!isSupabaseConfigured) throw new Error('Supabase not configured')
 
+  if (file.size > MAX_UPLOAD_BYTES) {
+    throw new Error(`File is too large (${(file.size / (1024 * 1024)).toFixed(1)}MB). Max size is 25MB.`)
+  }
+
   const sb = getSupabase()!
+
+  // Session can silently expire between page load and upload; surface a clear
+  // message instead of a confusing storage RLS error.
+  const { data: sessionData } = await sb.auth.getSession()
+  if (!sessionData.session) {
+    throw new Error('Your admin session has expired. Please log out and log back in, then try again.')
+  }
+
   const path = `${requestId}/${Date.now()}-${safeFileName(file.name)}`
 
-  const { error } = await sb.storage.from('completed-documents').upload(path, file, { upsert: true })
-  if (error) throw new Error(error.message)
+  const { error } = await sb.storage
+    .from('completed-documents')
+    .upload(path, file, { upsert: true, contentType: file.type || 'application/pdf' })
+
+  if (error) {
+    console.error('uploadCompletedDocument storage error:', error)
+    if (error.message.toLowerCase().includes('row-level security')) {
+      throw new Error('Upload denied — your account does not have admin/staff access. Contact the site owner.')
+    }
+    throw new Error(error.message)
+  }
 
   const { error: updateError } = await sb
     .from('service_requests')
     .update({ document_url: path } as never)
     .eq('id', requestId)
 
-  if (updateError) throw new Error(updateError.message)
+  if (updateError) {
+    console.error('uploadCompletedDocument db update error:', updateError)
+    throw new Error(updateError.message)
+  }
+
   return path
 }
 
