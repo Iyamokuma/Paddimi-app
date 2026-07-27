@@ -34,11 +34,21 @@ function loadFlutterwaveScript(): Promise<void> {
     script.src = 'https://checkout.flutterwave.com/v3.js'
     script.async = true
     script.onload = () => resolve()
-    script.onerror = () => reject(new Error('Failed to load Flutterwave'))
+    script.onerror = () => {
+      scriptPromise = null
+      reject(new Error('Failed to load Flutterwave'))
+    }
     document.body.appendChild(script)
   })
 
   return scriptPromise
+}
+
+/** Kick off the Flutterwave script download ahead of time, before the user clicks "Pay". */
+export function preloadFlutterwaveScript(): void {
+  loadFlutterwaveScript().catch(() => {
+    // Ignore — openFlutterwaveCheckout will surface the error if it still fails at pay time.
+  })
 }
 
 export function isFlutterwaveConfigured(): boolean {

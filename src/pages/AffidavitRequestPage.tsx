@@ -24,6 +24,8 @@ import { checkoutService } from '../lib/api/payments'
 import { getDefaultPaymentProvider, getAvailablePaymentProviders, type PaymentProvider } from '../lib/paymentProviders'
 import { PaymentProviderPicker } from '../components/PaymentProviderPicker'
 import { getNotifyChannels, hasContactInfo } from '../lib/customer'
+import { preloadPaystackScript } from '../lib/paystack'
+import { preloadFlutterwaveScript } from '../lib/flutterwave'
 
 const iconMap: Record<string, LucideIcon> = {
   UserPen, PenLine, Calendar, Heart, Flower2, Smartphone, Car, Cog,
@@ -55,6 +57,13 @@ export function AffidavitRequestPage() {
   useEffect(() => {
     setPaymentProvider(getDefaultPaymentProvider())
   }, [paymentOptions.length])
+
+  // Warm up the payment provider script(s) in the background early, so the
+  // "Pay" click doesn't have to wait for the script to download and parse.
+  useEffect(() => {
+    if (paymentProvider === 'paystack') preloadPaystackScript()
+    if (paymentProvider === 'flutterwave') preloadFlutterwaveScript()
+  }, [paymentProvider])
 
   const service = affidavitServices.find((s) => s.id === selectedService)
   const allFields = useMemo(

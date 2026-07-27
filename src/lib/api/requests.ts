@@ -87,28 +87,32 @@ export async function uploadRequestFiles(
   const sb = getSupabase()
   if (!sb) return
 
-  for (const [fieldId, fileList] of Object.entries(files)) {
-    for (const file of fileList) {
-      const path = `${requestId}/${fieldId}/${Date.now()}-${safeFileName(file.name)}`
-      const { error: uploadError } = await sb.storage
-        .from('customer-uploads')
-        .upload(path, file, { upsert: false })
+  const tasks = Object.entries(files).flatMap(([fieldId, fileList]) =>
+    fileList.map((file) => ({ fieldId, file })),
+  )
 
-      if (uploadError) {
-        console.warn('Upload failed:', uploadError.message)
-        continue
-      }
+  // Upload all files concurrently rather than one-at-a-time — this matters
+  // most when it runs in parallel with the payment popup (see checkoutService).
+  await Promise.all(tasks.map(async ({ fieldId, file }) => {
+    const path = `${requestId}/${fieldId}/${Date.now()}-${safeFileName(file.name)}`
+    const { error: uploadError } = await sb.storage
+      .from('customer-uploads')
+      .upload(path, file, { upsert: false })
 
-      await sb.from('request_documents').insert({
-        request_id: requestId,
-        field_id: fieldId,
-        field_label: labels[fieldId] ?? fieldId,
-        storage_path: path,
-        file_name: file.name,
-        mime_type: file.type,
-      } as never)
+    if (uploadError) {
+      console.warn('Upload failed:', uploadError.message)
+      return
     }
-  }
+
+    await sb.from('request_documents').insert({
+      request_id: requestId,
+      field_id: fieldId,
+      field_label: labels[fieldId] ?? fieldId,
+      storage_path: path,
+      file_name: file.name,
+      mime_type: file.type,
+    } as never)
+  }))
 }
 
 function normalizeStatus(status: unknown): RequestStatus {

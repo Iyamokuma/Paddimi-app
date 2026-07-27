@@ -43,11 +43,25 @@ function loadPaystackScript(): Promise<void> {
     script.src = 'https://js.paystack.co/v2/inline.js'
     script.async = true
     script.onload = () => resolve()
-    script.onerror = () => reject(new Error('Failed to load Paystack'))
+    script.onerror = () => {
+      scriptPromise = null // allow a retry later instead of getting stuck on a failed load
+      reject(new Error('Failed to load Paystack'))
+    }
     document.body.appendChild(script)
   })
 
   return scriptPromise
+}
+
+/**
+ * Kick off the Paystack script download ahead of time (e.g. as soon as the
+ * user reaches the review/payment step) so clicking "Pay" doesn't have to
+ * wait for the script to download and parse.
+ */
+export function preloadPaystackScript(): void {
+  loadPaystackScript().catch(() => {
+    // Ignore — openPaystackPopup will surface the error if it still fails at pay time.
+  })
 }
 
 export function isPaystackConfigured(): boolean {
