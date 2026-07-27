@@ -12,9 +12,7 @@ const AFFIDAVIT_STATE_PRICES: Record<string, number> = {
 }
 
 /** Affidavit types with a fixed price regardless of state */
-const AFFIDAVIT_FIXED_PRICES: Record<string, number> = {
-  'change-of-timizdigital': 200,
-}
+const AFFIDAVIT_FIXED_PRICES: Record<string, number> = {}
 
 export function getServicePrice(
   serviceId: string,

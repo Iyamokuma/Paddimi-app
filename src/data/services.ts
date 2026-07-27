@@ -19,9 +19,7 @@ export const AFFIDAVIT_STATE_PRICES: Record<string, number> = {
 }
 
 /** Affidavit types with a fixed price regardless of state */
-export const AFFIDAVIT_FIXED_PRICES: Record<string, number> = {
-  'change-of-timizdigital': 200,
-}
+export const AFFIDAVIT_FIXED_PRICES: Record<string, number> = {}
 
 export const affidavitServices: ServiceItem[] = [
   {
@@ -111,14 +109,6 @@ export const affidavitServices: ServiceItem[] = [
     description: 'Declaration for change of vehicle engine number after replacement or purchase.',
     price: AFFIDAVIT_STATE_PRICES.Rivers,
     icon: 'Cog',
-  },
-  {
-    id: 'change-of-timizdigital',
-    category: 'affidavit',
-    name: 'Affidavit of Change of TimizDigital (Business Name)',
-    description: 'Sworn declaration for change of registered business name.',
-    price: AFFIDAVIT_FIXED_PRICES['change-of-timizdigital'],
-    icon: 'Building2',
   },
 ]
 
