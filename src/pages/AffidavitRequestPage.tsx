@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import {
   UserPen, PenLine, Calendar, Heart, Flower2, Smartphone, Car, Cog,
   ArrowLeftRight, BadgeCheck, CalendarDays, Check, ArrowLeft, ArrowRight,
-  FileText, ShieldCheck, Building2,
+  FileText, ShieldCheck,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Button } from '../components/ui/Button'
@@ -29,7 +29,7 @@ import { preloadFlutterwaveScript } from '../lib/flutterwave'
 
 const iconMap: Record<string, LucideIcon> = {
   UserPen, PenLine, Calendar, Heart, Flower2, Smartphone, Car, Cog,
-  ArrowLeftRight, BadgeCheck, CalendarDays, FileText, Building2,
+  ArrowLeftRight, BadgeCheck, CalendarDays, FileText,
 }
 
 const steps = [
