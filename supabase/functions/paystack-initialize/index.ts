@@ -67,7 +67,10 @@ Deno.serve(async (req) => {
 
     if (error) return jsonResponse({ error: error.message }, 500)
 
-    await sb.from('request_timeline').insert([
+    // Kick off the timeline insert without waiting for it — it's independent
+    // of the Paystack call below, so run them concurrently to shave the DB
+    // round-trip off the critical path (Paystack's API call dominates latency).
+    const timelinePromise = sb.from('request_timeline').insert([
       { request_id: row.id, status: 'submitted', label: 'Payment Pending', completed: false },
       { request_id: row.id, status: 'processing', label: 'Document Processing', completed: false },
       { request_id: row.id, status: 'approved', label: 'Approved — Ready for Download', completed: false },
@@ -103,6 +106,8 @@ Deno.serve(async (req) => {
       accessCode = paystackData.data?.access_code
       authorizationUrl = paystackData.data?.authorization_url
     }
+
+    await timelinePromise
 
     return jsonResponse({
       requestId: row.id,

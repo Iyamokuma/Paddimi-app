@@ -74,6 +74,8 @@ Deno.serve(async (req) => {
     ])
 
     const publicKey = Deno.env.get('FLUTTERWAVE_PUBLIC_KEY') ?? ''
+    // No external API call needed here — Flutterwave's checkout is initialized
+    // entirely client-side, which is why it feels faster than Paystack's flow.
 
     return jsonResponse({
       requestId: row.id,
