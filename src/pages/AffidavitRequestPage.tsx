@@ -21,7 +21,9 @@ import {
 import { PaymentSuccess } from '../components/PaymentSuccess'
 import { PageHeader } from '../components/layout/PageHeader'
 import { checkoutService } from '../lib/api/payments'
-import { getDefaultPaymentProvider, getAvailablePaymentProviders, type PaymentProvider } from '../lib/paymentProviders'
+import {
+  getAvailablePaymentProviders, type PaymentProvider, type PaymentProviderOption,
+} from '../lib/paymentProviders'
 import { PaymentProviderPicker } from '../components/PaymentProviderPicker'
 import { getNotifyChannels, hasContactInfo } from '../lib/customer'
 import { preloadPaystackScript } from '../lib/paystack'
@@ -51,12 +53,23 @@ export function AffidavitRequestPage() {
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [agreedToTerms, setAgreedToTerms] = useState(false)
-  const paymentOptions = useMemo(() => getAvailablePaymentProviders(), [])
+  const [paymentOptions, setPaymentOptions] = useState<PaymentProviderOption[]>([])
   const [paymentProvider, setPaymentProvider] = useState<PaymentProvider | null>(null)
+  const [paymentOptionsLoading, setPaymentOptionsLoading] = useState(true)
 
+  // Availability is checked against the backend (which holds the real secret
+  // keys) rather than the frontend's own build-time env vars, so a missing
+  // Vercel env var can never silently hide checkout.
   useEffect(() => {
-    setPaymentProvider(getDefaultPaymentProvider())
-  }, [paymentOptions.length])
+    let cancelled = false
+    getAvailablePaymentProviders().then((options) => {
+      if (cancelled) return
+      setPaymentOptions(options)
+      setPaymentProvider(options.some((o) => o.id === 'paystack') ? 'paystack' : (options[0]?.id ?? null))
+      setPaymentOptionsLoading(false)
+    })
+    return () => { cancelled = true }
+  }, [])
 
   // Warm up the payment provider script(s) in the background early, so the
   // "Pay" click doesn't have to wait for the script to download and parse.
@@ -371,6 +384,7 @@ export function AffidavitRequestPage() {
               options={paymentOptions}
               value={paymentProvider}
               onChange={setPaymentProvider}
+              loading={paymentOptionsLoading}
             />
 
             <div className="rounded-xl border border-brand-100 bg-brand-50 p-4 text-sm text-brand-700">

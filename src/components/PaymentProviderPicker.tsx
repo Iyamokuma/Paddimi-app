@@ -1,13 +1,22 @@
-import { CreditCard } from 'lucide-react'
+import { Loader2, CreditCard } from 'lucide-react'
 import type { PaymentProvider, PaymentProviderOption } from '../lib/paymentProviders'
 
 interface PaymentProviderPickerProps {
   options: PaymentProviderOption[]
   value: PaymentProvider | null
   onChange: (provider: PaymentProvider) => void
+  loading?: boolean
 }
 
-export function PaymentProviderPicker({ options, value, onChange }: PaymentProviderPickerProps) {
+export function PaymentProviderPicker({ options, value, onChange, loading }: PaymentProviderPickerProps) {
+  if (loading) {
+    return (
+      <div className="flex items-center gap-2 rounded-xl border border-border bg-white p-4 text-sm text-muted">
+        <Loader2 className="h-4 w-4 animate-spin" /> Checking available payment methods…
+      </div>
+    )
+  }
+
   if (options.length === 0) {
     return (
       <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
