@@ -7,13 +7,14 @@ import {
 import type { LucideIcon } from 'lucide-react'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
+import { Select } from '../components/ui/Select'
 import { StepIndicator } from '../components/ui/StepIndicator'
 import { DynamicFormFields } from '../components/forms/DynamicFormFields'
 import {
   newspaperServices, formatNaira, getCheckoutPrice,
 } from '../data/services'
 import {
-  getNewspaperTextFields, getNewspaperFileFields,
+  getNewspaperTextFields, getNewspaperFileFields, NEWSPAPER_OPTIONS,
 } from '../data/newspaperFields'
 import { validateFields } from '../data/affidavitFields'
 import { PaymentSuccess } from '../components/PaymentSuccess'
@@ -32,14 +33,17 @@ const iconMap: Record<string, LucideIcon> = {
 }
 
 const steps = [
-  { id: 1, label: 'Publication Type' },
-  { id: 2, label: 'Details' },
-  { id: 3, label: 'Documents' },
-  { id: 4, label: 'Review & Pay' },
+  { id: 1, label: 'Newspaper & Terms' },
+  { id: 2, label: 'Publication Type' },
+  { id: 3, label: 'Details' },
+  { id: 4, label: 'Documents' },
+  { id: 5, label: 'Review & Pay' },
 ]
 
 export function NewspaperRequestPage() {
   const [step, setStep] = useState(1)
+  const [newspaper, setNewspaper] = useState('')
+  const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [selectedService, setSelectedService] = useState('')
   const [values, setValues] = useState<Record<string, string>>({})
   const [files, setFiles] = useState<Record<string, File[]>>({})
@@ -101,11 +105,12 @@ export function NewspaperRequestPage() {
 
   const canProceed = () => {
     switch (step) {
-      case 1: return !!selectedService
-      case 2: return validateFields(textFields, values, files)
+      case 1: return !!newspaper && agreedToTerms
+      case 2: return !!selectedService
+      case 3: return validateFields(textFields, values, files)
         && hasContactInfo(values.phone, values.email)
-      case 3: return validateFields(fileFields, values, files)
-      case 4: return hasContactInfo(values.phone, values.email)
+      case 4: return validateFields(fileFields, values, files)
+      case 5: return hasContactInfo(values.phone, values.email)
       default: return false
     }
   }
@@ -123,7 +128,7 @@ export function NewspaperRequestPage() {
         contactPhone: values.phone ?? '',
         contactEmail: values.email,
         referralCode: values.referralCode,
-        formData: values,
+        formData: { ...values, newspaper },
         paymentMethod: paymentProvider,
         amountPaid: total,
         files,
@@ -177,6 +182,49 @@ export function NewspaperRequestPage() {
         </div>
 
         {step === 1 && (
+          <div className="mx-auto max-w-md space-y-4">
+            <h2 className="text-lg font-semibold">Select newspaper</h2>
+            <p className="text-sm text-muted">
+              Choose the newspaper you'd like your notice published in.
+            </p>
+            <Select
+              label="Newspaper"
+              required
+              placeholder="Select a newspaper"
+              value={newspaper}
+              onChange={(e) => setNewspaper(e.target.value)}
+              options={NEWSPAPER_OPTIONS}
+            />
+            {newspaper === 'the-guardian' && (
+              <p className="rounded-xl border border-gold-200 bg-gold-50 p-3 text-xs text-gold-800">
+                Note: The Guardian publishes name change notices only on Wednesdays and Saturdays.
+              </p>
+            )}
+            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border p-4 text-sm">
+              <input
+                type="checkbox"
+                checked={agreedToTerms}
+                onChange={(e) => setAgreedToTerms(e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-border text-brand-600 focus:ring-brand-500"
+              />
+              <span className="text-muted">
+                I have read and agree to Paddimi's{' '}
+                <Link
+                  to="/terms"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-medium text-brand-600 underline hover:text-brand-700"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Terms &amp; Conditions
+                </Link>
+                .
+              </span>
+            </label>
+          </div>
+        )}
+
+        {step === 2 && (
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">Choose publication type</h2>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -227,7 +275,7 @@ export function NewspaperRequestPage() {
           </div>
         )}
 
-        {step === 2 && (
+        {step === 3 && (
           <div className="space-y-6">
             <div>
               <h2 className="text-lg font-semibold">Publication details</h2>
@@ -243,7 +291,7 @@ export function NewspaperRequestPage() {
           </div>
         )}
 
-        {step === 3 && (
+        {step === 4 && (
           <div className="space-y-6">
             <div>
               <h2 className="text-lg font-semibold">Upload supporting documents</h2>
@@ -274,7 +322,7 @@ export function NewspaperRequestPage() {
           </div>
         )}
 
-        {step === 4 && service && (
+        {step === 5 && service && (
           <div className="space-y-8">
             <div>
               <h2 className="text-lg font-semibold">Review your order</h2>
@@ -288,10 +336,12 @@ export function NewspaperRequestPage() {
                     <span className="text-muted">Applicant</span>
                     <span className="font-medium text-right">{values.fullName}</span>
                   </div>
-                  {values.preferredNewspaper && (
+                  {newspaper && (
                     <div className="flex justify-between">
                       <span className="text-muted">Newspaper</span>
-                      <span className="font-medium">{values.preferredNewspaper}</span>
+                      <span className="font-medium">
+                        {NEWSPAPER_OPTIONS.find((o) => o.value === newspaper)?.label ?? newspaper}
+                      </span>
                     </div>
                   )}
                   <div className="flex justify-between">
@@ -337,7 +387,7 @@ export function NewspaperRequestPage() {
           <Button variant="ghost" onClick={() => setStep((s) => s - 1)} disabled={step === 1}>
             <ArrowLeft className="h-4 w-4" /> Previous
           </Button>
-          {step < 4 ? (
+          {step < 5 ? (
             <Button onClick={() => setStep((s) => s + 1)} disabled={!canProceed()}>
               Continue <ArrowRight className="h-4 w-4" />
             </Button>
