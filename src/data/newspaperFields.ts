@@ -1,15 +1,41 @@
 import type { FormFieldDef } from '../types'
 
+/** Newspapers available for publication, selected before choosing a publication type */
+export const NEWSPAPER_OPTIONS = [
+  { value: 'the-guardian', label: 'The Guardian' },
+  { value: 'the-punch', label: 'The Punch' },
+  { value: 'the-vanguard', label: 'The Vanguard' },
+  { value: 'the-sun', label: 'The Sun' },
+  { value: 'the-nation', label: 'The Nation' },
+]
+
+export const RELIGION_OPTIONS = [
+  { value: 'christian', label: 'Christian' },
+  { value: 'muslim', label: 'Muslim' },
+  { value: 'other', label: 'Other' },
+]
+
 export const NEWSPAPER_SPECIFIC_FIELDS: Record<string, FormFieldDef[]> = {
   'name-change-publication': [
-    { id: 'affidavitDoc', label: 'Affidavit', type: 'file', required: true, accept: '.pdf,.jpg,.jpeg,.png' },
+    { id: 'oldName', label: 'Old Name', type: 'text', required: true },
+    { id: 'newName', label: 'New Name', type: 'text', required: true },
+    {
+      id: 'reasonForChange', label: 'Reason for Change', type: 'select', required: true,
+      options: [{ value: 'marriage', label: 'Marriage' }],
+    },
     { id: 'marriageCertificate', label: 'Marriage Certificate', type: 'file', required: true, accept: '.pdf,.jpg,.jpeg,.png' },
-    { id: 'publicationText', label: 'Publication Text (optional draft)', type: 'textarea', fullWidth: true },
   ],
   'name-correction-publication': [
-    { id: 'affidavitDoc', label: 'Affidavit', type: 'file', required: true, accept: '.pdf,.jpg,.jpeg,.png' },
-    { id: 'ninDoc', label: 'NIN', type: 'file', required: true, accept: '.pdf,.jpg,.jpeg,.png' },
-    { id: 'publicationText', label: 'Publication Text (optional draft)', type: 'textarea', fullWidth: true },
+    { id: 'wrongName', label: 'Wrong Name', type: 'text', required: true },
+    { id: 'correctName', label: 'Correct Name', type: 'text', required: true },
+    { id: 'affectedDocument', label: 'Affected Document', type: 'text', required: true, placeholder: 'e.g. NIN, International Passport, WAEC Certificate' },
+    {
+      id: 'whoToTakeNote', label: 'Who Should Take Note', type: 'select', required: true,
+      options: [
+        { value: 'general-public-relevant-authorities', label: 'General Public and Relevant Authorities' },
+        { value: 'other', label: 'Others' },
+      ],
+    },
   ],
   'loss-of-documents-publication': [
     { id: 'affidavitDoc', label: 'Affidavit of Loss', type: 'file', required: true, accept: '.pdf,.jpg,.jpeg,.png' },
@@ -38,11 +64,11 @@ export const NEWSPAPER_SPECIFIC_FIELDS: Record<string, FormFieldDef[]> = {
 
 export const NEWSPAPER_CONTACT_FIELDS: FormFieldDef[] = [
   { id: 'fullName', label: 'Full Name / Organisation', type: 'text', required: true },
+  { id: 'religion', label: 'Religion', type: 'select', required: true, options: RELIGION_OPTIONS },
   { id: 'email', label: 'Email Address', type: 'text', required: true, placeholder: 'you@email.com', hint: 'Required — your code and download link are sent here' },
   { id: 'phone', label: 'Phone Number (optional)', type: 'text', required: false, placeholder: '+234 801 234 5678', hint: 'Optional — for SMS updates if provided' },
   { id: 'referralCode', label: 'Referral Code', type: 'text', required: false, placeholder: 'Optional' },
   { id: 'state', label: 'State', type: 'text', required: true },
-  { id: 'preferredNewspaper', label: 'Preferred Newspaper', type: 'text', required: false, placeholder: 'e.g. The Punch, Vanguard' },
 ]
 
 export function getNewspaperFields(serviceId: string): FormFieldDef[] {
