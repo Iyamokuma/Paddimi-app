@@ -127,10 +127,11 @@ export const newspaperServices: ServiceItem[] = [
     id: 'name-correction-publication',
     category: 'newspaper',
     name: 'Name Correction Publication',
-    description: 'Publication to correct a wrongly spelt or recorded name on an official document.',
+    description: 'Publication to correct a wrongly spelt or recorded name on an official document — requires affidavit and National ID card.',
     price: 10000,
     turnaround: NEWSPAPER_TURNAROUND,
     icon: 'PenLine',
+    requiredDocuments: ['Affidavit', 'National ID Card'],
   },
   {
     id: 'loss-of-documents-publication',
