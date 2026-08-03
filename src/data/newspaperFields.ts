@@ -36,6 +36,8 @@ export const NEWSPAPER_SPECIFIC_FIELDS: Record<string, FormFieldDef[]> = {
         { value: 'other', label: 'Others' },
       ],
     },
+    { id: 'affidavitDoc', label: 'Affidavit', type: 'file', required: true, accept: '.pdf,.jpg,.jpeg,.png' },
+    { id: 'nationalIdCard', label: 'National ID Card', type: 'file', required: true, accept: '.pdf,.jpg,.jpeg,.png' },
   ],
   'loss-of-documents-publication': [
     { id: 'affidavitDoc', label: 'Affidavit of Loss', type: 'file', required: true, accept: '.pdf,.jpg,.jpeg,.png' },
