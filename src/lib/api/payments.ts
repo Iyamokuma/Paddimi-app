@@ -115,21 +115,14 @@ export async function checkoutService(
     paymentMethod: provider,
   })
 
-  // Upload the customer's photo/documents in the background instead of
-  // blocking the payment popup — this is what made checkout feel slow,
-  // since the popup previously waited for the upload to finish first.
-  // Uploading now overlaps with the time the customer spends on the
-  // payment page (entering card details, OTP, etc.).
-  const uploadPromise = input.files && Object.keys(input.files).length > 0
-    ? uploadRequestFiles(init.requestId, input.files, fileLabels)
-    : Promise.resolve()
+  // Upload photos/documents before opening payment so the admin always
+  // receives them with the order — a silent failed upload must not proceed
+  // to checkout after the customer has already paid.
+  if (input.files && Object.keys(input.files).length > 0) {
+    await uploadRequestFiles(init.requestId, input.files, fileLabels)
+  }
 
   await runPaymentPopup(provider, input, init)
-
-  // Make sure the upload has actually finished before we hand back a
-  // success code — uploadRequestFiles never throws (it logs and skips
-  // failed files), so this can't fail the checkout.
-  await uploadPromise
 
   const result = await invokeEdge<VerifyResponse>(getVerifyFunction(provider), {
     reference: init.reference,

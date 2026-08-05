@@ -105,6 +105,38 @@ export async function compressImageFile(
   return canvasToCompressedFile(canvas, file.name, quality, maxBytes)
 }
 
+/** Wait until the live video element has a frame we can capture. */
+export function waitForVideoFrame(video: HTMLVideoElement, timeoutMs = 8000): Promise<void> {
+  if (video.videoWidth > 0 && video.videoHeight > 0) {
+    return Promise.resolve()
+  }
+
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      cleanup()
+      reject(new Error('Camera is not ready yet'))
+    }, timeoutMs)
+
+    const onReady = () => {
+      if (video.videoWidth > 0 && video.videoHeight > 0) {
+        cleanup()
+        resolve()
+      }
+    }
+
+    const cleanup = () => {
+      clearTimeout(timeout)
+      video.removeEventListener('loadedmetadata', onReady)
+      video.removeEventListener('playing', onReady)
+      video.removeEventListener('resize', onReady)
+    }
+
+    video.addEventListener('loadedmetadata', onReady)
+    video.addEventListener('playing', onReady)
+    video.addEventListener('resize', onReady)
+  })
+}
+
 /**
  * Capture frame from a live camera video element and return a compressed JPEG file.
  */
@@ -118,9 +150,7 @@ export async function compressVideoFrame(
   const maxBytes = options.maxBytes ?? PASSPORT_MAX_BYTES
   const quality = options.quality ?? PASSPORT_JPEG_QUALITY
 
-  if (!video.videoWidth || !video.videoHeight) {
-    throw new Error('Camera is not ready yet')
-  }
+  await waitForVideoFrame(video)
 
   const canvas = drawToCanvas(video, video.videoWidth, video.videoHeight, maxWidth, maxHeight)
   return canvasToCompressedFile(canvas, fileName, quality, maxBytes)
