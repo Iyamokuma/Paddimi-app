@@ -105,57 +105,6 @@ export async function compressImageFile(
   return canvasToCompressedFile(canvas, file.name, quality, maxBytes)
 }
 
-/** Wait until the live video element has a frame we can capture. */
-export function waitForVideoFrame(video: HTMLVideoElement, timeoutMs = 8000): Promise<void> {
-  if (video.videoWidth > 0 && video.videoHeight > 0) {
-    return Promise.resolve()
-  }
-
-  return new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => {
-      cleanup()
-      reject(new Error('Camera is not ready yet'))
-    }, timeoutMs)
-
-    const onReady = () => {
-      if (video.videoWidth > 0 && video.videoHeight > 0) {
-        cleanup()
-        resolve()
-      }
-    }
-
-    const cleanup = () => {
-      clearTimeout(timeout)
-      video.removeEventListener('loadedmetadata', onReady)
-      video.removeEventListener('playing', onReady)
-      video.removeEventListener('resize', onReady)
-    }
-
-    video.addEventListener('loadedmetadata', onReady)
-    video.addEventListener('playing', onReady)
-    video.addEventListener('resize', onReady)
-  })
-}
-
-/**
- * Capture frame from a live camera video element and return a compressed JPEG file.
- */
-export async function compressVideoFrame(
-  video: HTMLVideoElement,
-  fileName = `camera-photo-${Date.now()}.jpg`,
-  options: CompressImageOptions = {},
-): Promise<File> {
-  const maxWidth = options.maxWidth ?? PASSPORT_MAX_WIDTH
-  const maxHeight = options.maxHeight ?? PASSPORT_MAX_HEIGHT
-  const maxBytes = options.maxBytes ?? PASSPORT_MAX_BYTES
-  const quality = options.quality ?? PASSPORT_JPEG_QUALITY
-
-  await waitForVideoFrame(video)
-
-  const canvas = drawToCanvas(video, video.videoWidth, video.videoHeight, maxWidth, maxHeight)
-  return canvasToCompressedFile(canvas, fileName, quality, maxBytes)
-}
-
 export function formatPhotoSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`

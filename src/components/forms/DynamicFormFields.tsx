@@ -34,7 +34,7 @@ export function DynamicFormFields({
                 accept={field.accept ?? '.jpg,.jpeg,.png'}
                 files={files[field.id] ?? []}
                 onChange={(f) => onFileChange(field.id, f)}
-                hint={field.hint ?? 'Upload a photo from your device or take one with your camera.'}
+                hint={field.hint ?? 'Tap Open camera to take a photo with your phone.'}
               />
             </div>
           )
