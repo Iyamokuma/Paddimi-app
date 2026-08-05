@@ -100,11 +100,11 @@ export async function uploadRequestFiles(
       .upload(path, file, { upsert: false })
 
     if (uploadError) {
-      console.warn('Upload failed:', uploadError.message)
-      return
+      console.error('Upload failed:', fieldId, uploadError.message)
+      throw new Error(`Could not upload ${labels[fieldId] ?? fieldId}: ${uploadError.message}`)
     }
 
-    await sb.from('request_documents').insert({
+    const { error: insertError } = await sb.from('request_documents').insert({
       request_id: requestId,
       field_id: fieldId,
       field_label: labels[fieldId] ?? fieldId,
@@ -112,6 +112,11 @@ export async function uploadRequestFiles(
       file_name: file.name,
       mime_type: file.type,
     } as never)
+
+    if (insertError) {
+      console.error('Document record failed:', fieldId, insertError.message)
+      throw new Error(`Could not save ${labels[fieldId] ?? fieldId} to your order`)
+    }
   }))
 }
 
