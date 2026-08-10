@@ -3,10 +3,7 @@ import type { FormFieldDef } from '../types'
 /** Newspapers available for publication, selected before choosing a publication type */
 export const NEWSPAPER_OPTIONS = [
   { value: 'the-guardian', label: 'The Guardian' },
-  { value: 'the-punch', label: 'The Punch' },
-  { value: 'the-vanguard', label: 'The Vanguard' },
   { value: 'the-sun', label: 'The Sun' },
-  { value: 'the-nation', label: 'The Nation' },
 ]
 
 export const RELIGION_OPTIONS = [

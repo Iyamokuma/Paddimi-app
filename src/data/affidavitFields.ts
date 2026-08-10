@@ -74,6 +74,39 @@ export const AFFIDAVIT_SPECIFIC_FIELDS: Record<string, FormFieldDef[]> = {
     { id: 'errorDocument', label: 'Error Document', type: 'text', required: true, fullWidth: true },
     { id: 'passportPhoto', label: 'Passport Photo', type: 'livePhoto', required: true },
   ],
+  'correction-of-name-and-dob': [
+    { id: 'wrongName', label: 'Wrong Name', type: 'text', required: true },
+    { id: 'correctName', label: 'Correct Name', type: 'text', required: true },
+    { id: 'wrongDateOfBirth', label: 'Wrong Date of Birth', type: 'date', required: true },
+    { id: 'correctDateOfBirth', label: 'Correct Date of Birth', type: 'date', required: true },
+    {
+      id: 'errorType', label: 'Error Type', type: 'select', required: true,
+      options: [
+        { value: 'omission', label: 'Omission' },
+        { value: 'addition', label: 'Addition' },
+        { value: 'wrong-spelling', label: 'Wrong Spelling' },
+      ],
+    },
+    {
+      id: 'nameContainingError', label: 'Name Containing Error', type: 'select', required: true,
+      options: [
+        { value: 'first-name', label: 'First Name' },
+        { value: 'middle-name', label: 'Middle Name' },
+        { value: 'last-name', label: 'Last Name' },
+      ],
+    },
+    {
+      id: 'document', label: 'Document', type: 'select', required: true,
+      options: [
+        { value: 'nin', label: 'National Identity' },
+        { value: 'passport', label: 'International Passport' },
+        { value: 'drivers-licence', label: "Driver's Licence" },
+        { value: 'bvn', label: 'BVN' },
+        { value: 'voters-card', label: 'Voters Card' },
+      ],
+    },
+    { id: 'passportPhoto', label: 'Passport Photo', type: 'livePhoto', required: true },
+  ],
   'confirmation-of-name': [
     { id: 'nameForConfirmation', label: 'Name for Confirmation', type: 'text', required: true },
     { id: 'alternateNameForConfirmation', label: 'Alternate Name for Confirmation', type: 'text', required: true },

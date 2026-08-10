@@ -55,6 +55,14 @@ export const affidavitServices: ServiceItem[] = [
     icon: 'Calendar',
   },
   {
+    id: 'correction-of-name-and-dob',
+    category: 'affidavit',
+    name: 'Affidavit of Correction of Name and Date of Birth',
+    description: 'Sworn correction of wrong name and date of birth on official documents.',
+    price: AFFIDAVIT_STATE_PRICES.Rivers,
+    icon: 'FileText',
+  },
+  {
     id: 'confirmation-of-name',
     category: 'affidavit',
     name: 'Affidavit of Confirmation of Name',
@@ -118,7 +126,7 @@ export const newspaperServices: ServiceItem[] = [
     category: 'newspaper',
     name: 'Name Change Publication',
     description: 'Newspaper publication for official name change due to marriage — requires a marriage certificate.',
-    price: 10000,
+    price: 7000,
     turnaround: NEWSPAPER_TURNAROUND,
     icon: 'Newspaper',
     requiredDocuments: ['Marriage Certificate'],
@@ -128,7 +136,7 @@ export const newspaperServices: ServiceItem[] = [
     category: 'newspaper',
     name: 'Name Correction Publication',
     description: 'Publication to correct a wrongly spelt or recorded name on an official document — requires affidavit and National ID card.',
-    price: 10000,
+    price: 7000,
     turnaround: NEWSPAPER_TURNAROUND,
     icon: 'PenLine',
     requiredDocuments: ['Affidavit', 'National ID Card'],
@@ -138,7 +146,7 @@ export const newspaperServices: ServiceItem[] = [
     category: 'newspaper',
     name: 'Loss of Documents Publication',
     description: 'Public notice for lost documents such as certificates, NIN, or licences.',
-    price: 60000,
+    price: 7000,
     turnaround: NEWSPAPER_TURNAROUND,
     icon: 'AlertCircle',
     requiredDocuments: ['Affidavit of Loss'],
@@ -148,7 +156,7 @@ export const newspaperServices: ServiceItem[] = [
     category: 'newspaper',
     name: 'Public Announcements',
     description: 'General public notices for legal, community, or personal matters.',
-    price: 60000,
+    price: 7000,
     turnaround: NEWSPAPER_TURNAROUND,
     icon: 'Megaphone',
   },
@@ -157,7 +165,7 @@ export const newspaperServices: ServiceItem[] = [
     category: 'newspaper',
     name: 'Congratulatory Messages',
     description: 'Celebrate graduations, weddings, promotions, anniversaries, childbirth, and more.',
-    price: 60000,
+    price: 7000,
     turnaround: NEWSPAPER_TURNAROUND,
     icon: 'PartyPopper',
   },
@@ -188,11 +196,11 @@ export function getAffidavitFixedPrice(serviceId: string): number | null {
 }
 
 const NEWSPAPER_PRICES: Record<string, number> = {
-  'name-change-publication': 10000,
-  'name-correction-publication': 10000,
-  'loss-of-documents-publication': 60000,
-  'public-announcements': 60000,
-  'congratulatory-messages': 60000,
+  'name-change-publication': 7000,
+  'name-correction-publication': 7000,
+  'loss-of-documents-publication': 7000,
+  'public-announcements': 7000,
+  'congratulatory-messages': 7000,
 }
 
 export function getNewspaperPrice(serviceId: string): number | null {

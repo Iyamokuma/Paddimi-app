@@ -1,9 +1,9 @@
 const NEWSPAPER_PRICES: Record<string, number> = {
-  'name-change-publication': 10000,
-  'name-correction-publication': 10000,
-  'loss-of-documents-publication': 60000,
-  'public-announcements': 60000,
-  'congratulatory-messages': 60000,
+  'name-change-publication': 7000,
+  'name-correction-publication': 7000,
+  'loss-of-documents-publication': 7000,
+  'public-announcements': 7000,
+  'congratulatory-messages': 7000,
 }
 
 const AFFIDAVIT_STATE_PRICES: Record<string, number> = {

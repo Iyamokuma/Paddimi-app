@@ -12,6 +12,7 @@ import { sendNotification, getAdminFileUrl } from '../../lib/api/notifications'
 import { getCustomerName, getNotifyChannels } from '../../lib/customer'
 import type { ServiceRequestRow } from '../../lib/database.types'
 import { formatNaira } from '../../data/services'
+import { formatFieldLabel, formatFormFieldValue } from '../../lib/formatDisplay'
 import { AdminStatusBadge } from '../components/AdminStatusBadge'
 import { Button } from '../../components/ui/Button'
 import { Select } from '../../components/ui/Select'
@@ -225,12 +226,12 @@ export function AdminRequestDetailPage() {
             <h3 className="font-semibold">Form Data</h3>
             <dl className="mt-4 grid gap-3 sm:grid-cols-2">
               {Object.entries(formData)
-                .filter(([key]) => key !== 'notifyChannel')
+                .filter(([key]) => key !== 'notifyChannel' && key !== 'coveredState')
                 .map(([key, value]) => (
                 value ? (
                   <div key={key}>
-                    <dt className="text-xs capitalize text-muted">{key.replace(/([A-Z])/g, ' $1')}</dt>
-                    <dd className="mt-0.5 text-sm font-medium">{value}</dd>
+                    <dt className="text-xs text-muted">{formatFieldLabel(key)}</dt>
+                    <dd className="mt-0.5 text-sm font-medium">{formatFormFieldValue(key, String(value))}</dd>
                   </div>
                 ) : null
               ))}
