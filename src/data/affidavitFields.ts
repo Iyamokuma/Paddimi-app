@@ -192,6 +192,17 @@ export const AFFIDAVIT_SPECIFIC_FIELDS: Record<string, FormFieldDef[]> = {
     { id: 'placeOfPurchase', label: 'Place of Purchase of Engine', type: 'text', required: true, fullWidth: true },
     { id: 'passportPhoto', label: 'Passport Photo', type: 'livePhoto', required: true },
   ],
+  'change-of-signature': [
+    { id: 'bankName', label: 'Bank Name', type: 'text', required: true },
+    { id: 'accountNumber', label: 'Account Number', type: 'text', required: true },
+    { id: 'accountName', label: 'Account Name', type: 'text', required: true },
+    {
+      id: 'signatureSpecimen', label: 'Specimen of New Signature', type: 'file', required: true,
+      accept: '.pdf,.jpg,.jpeg,.png',
+      hint: 'Upload a clear image or scan of your new signature',
+    },
+    { id: 'passportPhoto', label: 'Passport Photo', type: 'livePhoto', required: true },
+  ],
 }
 
 export function getAffidavitFields(serviceId: string): FormFieldDef[] {

@@ -18,14 +18,14 @@ import {
 } from '../data/services'
 
 const stats = [
-  { value: '12', label: 'Affidavit Types' },
+  { value: '13', label: 'Affidavit Types' },
   { value: '5', label: 'Publication Types' },
   { value: AFFIDAVIT_TURNAROUND, label: 'Affidavit Turnaround' },
   { value: NEWSPAPER_TURNAROUND, label: 'Publication Turnaround' },
 ]
 
 const steps = [
-  { icon: FileText, title: 'Choose Service', desc: 'Select from 12 affidavit types or 5 newspaper publication options.' },
+  { icon: FileText, title: 'Choose Service', desc: 'Select from 13 affidavit types or 5 newspaper publication options.' },
   { icon: Smartphone, title: 'Submit & Pay', desc: 'Complete the required fields, upload documents, and pay securely online.' },
   { icon: CheckCircle2, title: 'Get Your Code', desc: 'Receive a 4-character redemption code via SMS and email when ready.' },
   { icon: Download, title: 'Download Document', desc: 'Enter your code on this page to download — electronic delivery only.' },

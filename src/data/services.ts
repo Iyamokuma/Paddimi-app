@@ -118,6 +118,14 @@ export const affidavitServices: ServiceItem[] = [
     price: AFFIDAVIT_STATE_PRICES.Rivers,
     icon: 'Cog',
   },
+  {
+    id: 'change-of-signature',
+    category: 'affidavit',
+    name: 'Affidavit of Change of Signature',
+    description: 'Sworn declaration of change of bank signature — requires bank details and a specimen of your new signature.',
+    price: AFFIDAVIT_STATE_PRICES.Rivers,
+    icon: 'PenLine',
+  },
 ]
 
 export const newspaperServices: ServiceItem[] = [

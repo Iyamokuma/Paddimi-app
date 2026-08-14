@@ -314,10 +314,14 @@ export function AffidavitRequestPage() {
         {step === 4 && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-lg font-semibold">Passport photo</h2>
+              <h2 className="text-lg font-semibold">
+                {fileFields.some((f) => f.type === 'file') ? 'Documents & photo' : 'Passport photo'}
+              </h2>
               <p className="mt-1 text-sm text-muted">
                 {fileFields.length > 0
-                  ? 'Upload a photo from your device or take one instantly with your camera.'
+                  ? fileFields.some((f) => f.type === 'file')
+                    ? 'Upload all required documents and your passport photo before payment.'
+                    : 'Take a photo with your phone camera before payment.'
                   : 'No photo required for this affidavit type.'}
               </p>
             </div>
