@@ -102,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error.message.toLowerCase().includes('invalid login credentials')) {
         return {
           error:
-            'Invalid login credentials. If this is your first login, deploy the bootstrap-admin edge function in Supabase (see SUPABASE_SETUP.md).',
+            'Invalid email or password. Try admin@paddimi.com or paddimi.mc@yahoo.com with the correct password. If this is a new setup, ensure bootstrap-admin is deployed in Supabase.',
         }
       }
       return { error: error.message }
