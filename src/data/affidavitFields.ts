@@ -2,7 +2,7 @@ import type { FormFieldDef } from '../types'
 
 export const COMMON_DEPONENT_FIELDS: FormFieldDef[] = [
   { id: 'firstName', label: 'First Name', type: 'text', required: true },
-  { id: 'middleName', label: 'Middle Name', type: 'text', required: true },
+  { id: 'middleName', label: 'Middle Name (optional)', type: 'text', required: false },
   { id: 'lastName', label: 'Last Name', type: 'text', required: true },
   {
     id: 'sex', label: 'Sex', type: 'select', required: true,
@@ -16,6 +16,13 @@ export const COMMON_DEPONENT_FIELDS: FormFieldDef[] = [
   { id: 'state', label: 'State', type: 'text', required: true },
   { id: 'lga', label: 'LGA', type: 'text', required: true },
 ]
+
+/** Fields shown before the common deponent fields */
+export const AFFIDAVIT_LEADING_FIELDS: Record<string, FormFieldDef[]> = {
+  'customized-affidavit': [
+    { id: 'affidavitTitle', label: 'Affidavit Title', type: 'text', required: true, fullWidth: true, placeholder: 'e.g. Affidavit of Good Conduct' },
+  ],
+}
 
 export const AFFIDAVIT_SPECIFIC_FIELDS: Record<string, FormFieldDef[]> = {
   'change-of-name': [
@@ -33,7 +40,7 @@ export const AFFIDAVIT_SPECIFIC_FIELDS: Record<string, FormFieldDef[]> = {
   'rearrangement-of-name': [
     { id: 'correctSurname', label: 'Correct Arrangement of Surname', type: 'text', required: true },
     { id: 'correctFirstName', label: 'Correct Arrangement of First Name', type: 'text', required: true },
-    { id: 'correctMiddleName', label: 'Correct Arrangement of Middle Name', type: 'text', required: true },
+    { id: 'correctMiddleName', label: 'Correct Arrangement of Middle Name (optional)', type: 'text', required: false },
     { id: 'documentAffected', label: 'Document Affected', type: 'text', required: true, fullWidth: true },
     { id: 'passportPhoto', label: 'Passport Photo', type: 'livePhoto', required: true },
   ],
@@ -170,6 +177,7 @@ export const AFFIDAVIT_SPECIFIC_FIELDS: Record<string, FormFieldDef[]> = {
     { id: 'simNumber', label: 'SIM Number', type: 'text', required: true },
     { id: 'dateOfLost', label: 'Date of Lost', type: 'date', required: true },
     { id: 'placeOfLost', label: 'Place of Lost', type: 'text', required: true, fullWidth: true },
+    { id: 'newPhoneNumber', label: 'New Phone Number', type: 'text', required: true, placeholder: '+234 801 234 5678' },
     { id: 'passportPhoto', label: 'Passport Photo', type: 'livePhoto', required: true },
   ],
   'change-vehicle-plate': [
@@ -203,10 +211,38 @@ export const AFFIDAVIT_SPECIFIC_FIELDS: Record<string, FormFieldDef[]> = {
     },
     { id: 'passportPhoto', label: 'Passport Photo', type: 'livePhoto', required: true },
   ],
+  'removal-of-middle-name': [
+    { id: 'beneficiaryName', label: "Beneficiary's Name", type: 'text', required: true },
+    { id: 'placeOfBirth', label: 'Place of Birth', type: 'text', required: true },
+    { id: 'dateOfBirth', label: 'Date of Birth', type: 'date', required: true },
+    { id: 'stateOfBirth', label: 'State of Birth', type: 'text', required: true },
+    { id: 'lgaOfBirth', label: 'LGA of Birth', type: 'text', required: true },
+    { id: 'relationshipToBeneficiary', label: "Deponent's Relationship to Beneficiary", type: 'text', required: true, fullWidth: true },
+    {
+      id: 'reasonNoBirthCertificate', label: 'Reason No Birth Certificate', type: 'select', required: true,
+      options: [
+        { value: 'no-registry', label: 'No Birth Registry' },
+        { value: 'missing', label: 'Birth Certificate is Missing' },
+      ],
+    },
+  ],
+  'customized-affidavit': [
+    { id: 'otherInfo1', label: 'Other Required Information (1) (optional)', type: 'text', required: false, fullWidth: true },
+    { id: 'otherInfo2', label: 'Other Required Information (2) (optional)', type: 'text', required: false, fullWidth: true },
+    { id: 'otherInfo3', label: 'Other Required Information (3) (optional)', type: 'text', required: false, fullWidth: true },
+    {
+      id: 'affidavitDescription', label: 'Description of Requested Affidavit', type: 'textarea', required: true, fullWidth: true,
+      placeholder: 'Describe what the affidavit should state…',
+    },
+  ],
 }
 
 export function getAffidavitFields(serviceId: string): FormFieldDef[] {
-  return [...COMMON_DEPONENT_FIELDS, ...(AFFIDAVIT_SPECIFIC_FIELDS[serviceId] ?? [])]
+  return [
+    ...(AFFIDAVIT_LEADING_FIELDS[serviceId] ?? []),
+    ...COMMON_DEPONENT_FIELDS,
+    ...(AFFIDAVIT_SPECIFIC_FIELDS[serviceId] ?? []),
+  ]
 }
 
 export function getTextFields(fields: FormFieldDef[]): FormFieldDef[] {

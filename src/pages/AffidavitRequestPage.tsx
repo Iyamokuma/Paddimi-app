@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import {
   UserPen, PenLine, Calendar, Heart, Flower2, Smartphone, Car, Cog,
   ArrowLeftRight, BadgeCheck, CalendarDays, Check, ArrowLeft, ArrowRight,
-  FileText, ShieldCheck,
+  FileText, ShieldCheck, UserMinus, FilePen,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Button } from '../components/ui/Button'
@@ -31,7 +31,7 @@ import { preloadFlutterwaveScript } from '../lib/flutterwave'
 
 const iconMap: Record<string, LucideIcon> = {
   UserPen, PenLine, Calendar, Heart, Flower2, Smartphone, Car, Cog,
-  ArrowLeftRight, BadgeCheck, CalendarDays, FileText,
+  ArrowLeftRight, BadgeCheck, CalendarDays, FileText, UserMinus, FilePen,
 }
 
 const steps = [
@@ -190,7 +190,7 @@ export function AffidavitRequestPage() {
     <>
       <PageHeader
         title="Request an Affidavit"
-        description={`Genuine affidavits in ${AFFIDAVIT_TURNAROUND} — currently available in Rivers and Abia State.`}
+        description={`Genuine affidavits in ${AFFIDAVIT_TURNAROUND} — currently available in ${COVERED_STATES.join(', ').replace(/, ([^,]*)$/, ' and $1')} State.`}
         icon={<FileText className="h-7 w-7" />}
       />
       <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
@@ -290,7 +290,7 @@ export function AffidavitRequestPage() {
           <div className="space-y-8">
             <div>
               <h2 className="text-lg font-semibold">Your details</h2>
-              <p className="mt-1 text-sm text-muted">Complete all fields for {service?.name}.</p>
+              <p className="mt-1 text-sm text-muted">Complete all required fields for {service?.name}.</p>
               <div className="mt-6 space-y-6">
                 <DynamicFormFields
                   fields={deponentFields}

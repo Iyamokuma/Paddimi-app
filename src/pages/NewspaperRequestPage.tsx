@@ -200,6 +200,11 @@ export function NewspaperRequestPage() {
                 Note: The Guardian publishes name change notices only on Wednesdays and Saturdays.
               </p>
             )}
+            {newspaper === 'leadership' && (
+              <p className="rounded-xl border border-gold-200 bg-gold-50 p-3 text-xs text-gold-800">
+                Note: Leadership publications will be ready the next day.
+              </p>
+            )}
             <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border p-4 text-sm">
               <input
                 type="checkbox"

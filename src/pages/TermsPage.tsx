@@ -63,9 +63,12 @@ export function TermsPage() {
               <li>Affidavit of Age Declaration</li>
               <li>Affidavit of Declaration of Marriage</li>
               <li>Affidavit of Death</li>
-              <li>Affidavit of Loss of Sim Card</li>
+              <li>Affidavit of Loss of Sim Card / Change of Phone Number</li>
               <li>Affidavit for Change of Vehicle Plate Number</li>
               <li>Affidavit of Change of Engine Number</li>
+              <li>Affidavit of Change of Signature</li>
+              <li>Affidavit for Removal of Middle Name</li>
+              <li>Customized Affidavits (available in all covered states)</li>
             </ul>
             <p><strong className="text-foreground">Turnaround Time:</strong> The expected turnaround time for affidavits is 15 minutes.</p>
 
@@ -80,7 +83,8 @@ export function TermsPage() {
             </ul>
             <p>
               <strong className="text-foreground">Turnaround Time:</strong> The expected turnaround time for newspaper
-              publications is 24 hours or as scheduled by the particular newspaper.
+              publications is 24 hours or as scheduled by the particular newspaper. Publications in Leadership will be
+              ready the next day.
             </p>
 
             <p><strong className="text-foreground">3.3 Digital Delivery</strong></p>
@@ -137,6 +141,7 @@ export function TermsPage() {
                 <tbody className="divide-y divide-border">
                   <tr><td className="px-4 py-3">Affidavits — Rivers State (Port Harcourt)</td><td className="px-4 py-3">N3,500</td></tr>
                   <tr><td className="px-4 py-3">Affidavits — Abia State</td><td className="px-4 py-3">N3,000</td></tr>
+                  <tr><td className="px-4 py-3">Affidavits — Enugu State</td><td className="px-4 py-3">N3,000</td></tr>
                   <tr><td className="px-4 py-3">Name Change Publications</td><td className="px-4 py-3">N10,000</td></tr>
                   <tr><td className="px-4 py-3">Name Correction Publications</td><td className="px-4 py-3">N10,000</td></tr>
                   <tr><td className="px-4 py-3">Loss of Documents Publication (2x2)</td><td className="px-4 py-3">N60,000</td></tr>

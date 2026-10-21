@@ -9,6 +9,7 @@ const NEWSPAPER_PRICES: Record<string, number> = {
 const AFFIDAVIT_STATE_PRICES: Record<string, number> = {
   Rivers: 3500,
   Abia: 3000,
+  Enugu: 3000,
 }
 
 /** Affidavit types with a fixed price regardless of state */

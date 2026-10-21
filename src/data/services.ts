@@ -10,12 +10,13 @@ export const NEWSPAPER_TURNAROUND = '24 hours'
 export const CODE_VALIDITY = '1 year'
 
 /** States currently served for affidavit requests */
-export const COVERED_STATES = ['Rivers', 'Abia'] as const
+export const COVERED_STATES = ['Rivers', 'Abia', 'Enugu'] as const
 
 /** Affidavit pricing by state (Port Harcourt = Rivers) */
 export const AFFIDAVIT_STATE_PRICES: Record<string, number> = {
   Rivers: 3500,
   Abia: 3000,
+  Enugu: 3000,
 }
 
 /** Affidavit types with a fixed price regardless of state */
@@ -97,8 +98,8 @@ export const affidavitServices: ServiceItem[] = [
   {
     id: 'loss-of-sim',
     category: 'affidavit',
-    name: 'Affidavit of Loss of SIM Card',
-    description: 'Declaration of lost SIM card for network provider and recovery processes.',
+    name: 'Affidavit of Loss of SIM Card / Change of Phone Number',
+    description: 'Declaration of lost SIM card and change to a new phone number, for network provider and recovery processes.',
     price: AFFIDAVIT_STATE_PRICES.Rivers,
     icon: 'Smartphone',
   },
@@ -125,6 +126,22 @@ export const affidavitServices: ServiceItem[] = [
     description: 'Sworn declaration of change of bank signature — requires bank details and a specimen of your new signature.',
     price: AFFIDAVIT_STATE_PRICES.Rivers,
     icon: 'PenLine',
+  },
+  {
+    id: 'removal-of-middle-name',
+    category: 'affidavit',
+    name: 'Affidavit for Removal of Middle Name',
+    description: 'Sworn declaration to remove a middle name from official records.',
+    price: AFFIDAVIT_STATE_PRICES.Rivers,
+    icon: 'UserMinus',
+  },
+  {
+    id: 'customized-affidavit',
+    category: 'affidavit',
+    name: 'Customized Affidavit',
+    description: 'Any other affidavit — give it a title, add the details you need, and describe what it should state.',
+    price: AFFIDAVIT_STATE_PRICES.Rivers,
+    icon: 'FilePen',
   },
 ]
 

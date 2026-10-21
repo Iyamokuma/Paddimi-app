@@ -37,6 +37,7 @@ const SELECT_VALUE_LABELS: Record<string, string> = {
   marriage: 'Marriage',
   'the-guardian': 'The Guardian',
   'the-sun': 'The Sun',
+  leadership: 'Leadership',
 }
 
 /** Format stored form values for admin display (dates → 1st Jan 1983). */
