@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Logo } from '../Logo'
+import { getWhatsAppLink, WHATSAPP_DISPLAY } from '../../config/contact'
 
 const affidavitTypes = [
   'Change of Name',
@@ -39,6 +40,11 @@ export function Footer() {
               <li><Link to="/newspaper" className="transition-colors hover:text-gold-300">Newspaper Publication</Link></li>
               <li><Link to="/track" className="transition-colors hover:text-gold-300">Track Request</Link></li>
               <li><a href="/#download" className="transition-colors hover:text-gold-300">Download Document</a></li>
+              <li>
+                <a href={getWhatsAppLink()} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-gold-300">
+                  Chat on WhatsApp ({WHATSAPP_DISPLAY})
+                </a>
+              </li>
             </ul>
           </div>
 

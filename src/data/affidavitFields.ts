@@ -234,6 +234,17 @@ export const AFFIDAVIT_SPECIFIC_FIELDS: Record<string, FormFieldDef[]> = {
       id: 'affidavitDescription', label: 'Description of Requested Affidavit', type: 'textarea', required: true, fullWidth: true,
       placeholder: 'Describe what the affidavit should state…',
     },
+    { id: 'passportPhoto', label: 'Passport Photo', type: 'livePhoto', required: true },
+    {
+      id: 'otherDocument1', label: 'Other Document (1) (optional)', type: 'file', required: false,
+      accept: '.pdf,.jpg,.jpeg,.png',
+      hint: 'Any document that supports your affidavit, e.g. ID card or birth certificate',
+    },
+    {
+      id: 'otherDocument2', label: 'Other Document (2) (optional)', type: 'file', required: false,
+      accept: '.pdf,.jpg,.jpeg,.png',
+      hint: 'Any document that supports your affidavit, e.g. ID card or birth certificate',
+    },
   ],
 }
 

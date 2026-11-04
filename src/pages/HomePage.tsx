@@ -7,11 +7,13 @@ import {
   Newspaper,
   CheckCircle2,
   Download,
+  MessageCircle,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { DownloadSection } from '../components/DownloadSection'
+import { getWhatsAppLink } from '../config/contact'
 import {
   affidavitServices, newspaperServices, formatNaira,
   AFFIDAVIT_TURNAROUND, NEWSPAPER_TURNAROUND,
@@ -256,6 +258,12 @@ export function HomePage() {
               <Button variant="outline" size="lg" className="border-white/20 bg-white/5 text-white hover:bg-white/10">
                 <Download className="h-5 w-5" />
                 Download Document
+              </Button>
+            </a>
+            <a href={getWhatsAppLink()} target="_blank" rel="noopener noreferrer">
+              <Button size="lg" className="bg-[#25D366]! text-white shadow-black/10! hover:bg-[#1EBE5A]!">
+                <MessageCircle className="h-5 w-5" />
+                Chat on WhatsApp
               </Button>
             </a>
           </div>
